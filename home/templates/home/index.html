@@ -2,8 +2,65 @@
 <html>
 <head>
   <title>Home page</title>
+  <style>
+    body {
+        background-color: #121212;
+        color: #ffffff;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+
+    .header-container {
+        padding-top: 60px;
+    }
+
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 1.2em;
+        color: #cccccc;
+        margin-bottom: 30px;
+    }
+
+    .button-container {
+        margin-top: 20px;
+    }
+
+    button {
+        background-color: #1f1f1f;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+    }
+
+    button:hover {
+        background-color: #333333;
+    }
+
+    a {
+        text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-  <h1>MoneyParce Home Page</h1>
+  <div class="header-container">
+    <h1>Welcome to MoneyParce!</h1>
+    <p>Access our tools by logging in or registering an account.</p>
+    <div class="button-container">
+      <a href="/login"><button>Login</button></a>
+      <a href="/register"><button>Register</button></a>
+    </div>
+  </div>
+  <footer>
+    <p><a href="/about-us">About Us</a></p>
+  </footer>
 </body>
 </html>
