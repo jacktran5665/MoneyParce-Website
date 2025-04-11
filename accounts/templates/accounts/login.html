@@ -57,13 +57,20 @@
         button:hover {
             background-color: #333333;
         }
+
+        .error {
+            color: #ff4d4d;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="header-container">
         <h1>Login</h1>
     </div>
-    <form method="POST" action="/login">
+
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
 
@@ -72,5 +79,13 @@
 
         <button type="submit">Login</button>
     </form>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div class="button-container">
+        <a href="{% url 'register' %}"><button>Sign Up</button></a>
+    </div>
 </body>
 </html>

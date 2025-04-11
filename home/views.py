@@ -1,32 +1,49 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
+from .models import Profile
+import re
 
 def index(request):
     return render(request, 'home/index.html')
 
-def register(request):
-    if request.method == 'POST':
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
-        if password == confirm_password:
-            # Assume user registration logic here (e.g., create user in the database)
-            return redirect('homepage')  # Redirect to homepage after successful registration
-        else:
-            return render(request, 'home/register.html', {'error': 'Passwords do not match'})
-    return render(request, 'home/register.html')
-
-def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        # Placeholder authentication logic here (replace with actual login logic)
-        if username == 'valid_user' and password == 'valid_pass':  # Actual authentication needed
-            return redirect('home:homepage')  # Redirect to homepage after successful login
-        else:
-            return render(request, 'home/login.html', {'error': 'Invalid username or password'})
-    return render(request, 'home/login.html')
-
-def homepage(request):
-    return render(request, 'home/homepage.html')
+def dashboard(request):
+    return render(request, 'accounts/dashboard.html')  # Updated path
 
 def about_us(request):
     return render(request, 'home/about_us.html')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect('/dashboard')
+        else:
+            return render(request, 'accounts/login.html', {'error': 'Invalid credentials'})
+    return render(request, 'accounts/login.html')
+
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        budget = request.POST.get('security_question')
+
+        if password != confirm_password:
+            return render(request, 'accounts/register.html', {'error': 'Passwords do not match'})
+
+        # Password validation
+        if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d{6,})(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$', password):
+            return render(request, 'accounts/register.html', {'error': 'Password must have at least 1 uppercase, 1 lowercase, 6 numbers, and 1 symbol'})
+
+        # Create user
+        user = User.objects.create_user(username=username, password=password)
+
+        # Create profile
+        Profile.objects.create(user=user, budget=budget)
+
+        return redirect('/dashboard')
+    return render(request, 'accounts/register.html')
