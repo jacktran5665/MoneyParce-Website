@@ -7,9 +7,6 @@ import re
 def index(request):
     return render(request, 'home/index.html')
 
-def dashboard(request):
-    return render(request, 'accounts/dashboard.html')  # Updated path
-
 def about_us(request):
     return render(request, 'home/about_us.html')
 
