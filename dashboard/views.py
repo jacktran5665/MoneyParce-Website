@@ -40,6 +40,8 @@ def dashboard_view(request):
                 except Exception:
                     amount = Decimal("0.00")
                 Budget.objects.create(name=budget_name, total_budget=amount)
+
+        return redirect("/dashboard")
                 
     
     total_income = sum(item.amount for item in Income.objects.all())
