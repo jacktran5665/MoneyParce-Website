@@ -1,60 +1,10 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 {% load static %}
-<head>
-  <title>MoneyParce Overview</title>
-  <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Irish+Grover&family=Passion+One:wght@400;700;900&display=swap"
-      rel="stylesheet" />
-  <link rel="stylesheet" 
-        type="text/css" 
-        href="{% static 'css/style.css' %}" />
-</head>
-
-<body>
-  <div class="sideBar">
-    <div class="sideBarHeader">
-      <img src="{% static 'img/logo.png' %}" style="height: 70px" />
-      <div id="LogoName">MoneyParce</div>
-      <div class="sideBarText">Welcome, user</div>
-    </div>
-    <div class="navigator">
-      <div class="navDiv">
-        <img src="{% static 'img/overview.png' %}" style="height: 20px; margin-right: 20px;" />
-        <div class="sideBarText">Overview</div>
-      </div>
-      
-      <div class="navDiv">
-        <img src="{% static 'img/tran.png' %}" style="height: 20px; margin-right: 20px;" />
-        <div class="sideBarText">Transactions</div>
-      </div>
-      
-      <a href="{% url 'budget_summary' %}">
-        <div class="navDiv">
-          <img src="{% static 'img/report.png' %}" style="height: 20px; margin-right: 20px;" />
-          <div class="sideBarText">Reports</div>
-        </div>
-      </a>
-
-      <div class="navDiv">
-        <img src="{% static 'img/settings.png' %}" style="height: 20px; margin-right: 20px;" />
-        <div class="sideBarText">Settings</div>
-      </div>
-      
-      
-    </div>
-  </div>
-
-  <div class="mainWrapper">
-
-    <div class="header">
-      <div class="pageTitle">Overview</div>
-    </div>
-      
-    <div class="innerWrapper">
-
-
-
+{% block content %}
+<div class="header">
+  <div class="pageTitle">Overview</div>
+</div>
+<div class="innerWrapper">
     <div class="totalContainer">
       <div class="totalRed">
         <div class="totalTitle">Current Balance</div>
@@ -83,7 +33,7 @@
           <div>{{ budget.expenses_total|floatformat:2 }} / {{ budget.total_budget }}</div>
         </div>
         {% empty %}
-          <div class="totalText">No budgets created yet.</div>
+          <div class="totalTitle">* No budgets created yet.</div>
         {% endfor %}
       </ul>
       <div id="new-budget-form">
@@ -120,8 +70,8 @@
             <button type="submit" name="submit_expense">+ Add Expense</button>
           </fieldset>
         </form>
-      </div>
-    </div>
+      <!-- </div>
+    </div> -->
 
   <script>
     function toggleBudgetForm() {
@@ -133,5 +83,5 @@
       }
     }
   </script>
-</body>
-</html>
+</div>
+{% endblock content %}

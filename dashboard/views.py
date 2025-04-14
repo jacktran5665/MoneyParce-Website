@@ -60,3 +60,6 @@ def dashboard_view(request):
 
 
     return render(request, 'dashboard/dashboard.html', context)
+
+def dashboard(request):
+    return render(request, 'dashboard/dashboard.html')

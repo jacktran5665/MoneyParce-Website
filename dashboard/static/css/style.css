@@ -36,6 +36,12 @@ body {
 
 .sideBarText {
   font-size: 14px;
+  color: white;
+  text-decoration: none;
+}
+.sideBarText:hover {
+  color: #92140C;
+  transition: 0.4s;
 }
 
 .navigator {
@@ -182,11 +188,20 @@ body {
   background-color: #92140C;
   color: white;
   border-radius: 30px;
+  border: none;
 
   cursor: pointer;
   margin-bottom: 20px;
 }
 
+.chartWrapper{
+margin-top: 30px;
+}
+
+#chart_div {
+  width: 1000px;
+  height: 600px;
+}
 
   /* Right Panel: Totals & Forms */
   fieldset {
@@ -199,7 +214,6 @@ body {
     font-weight: bold;
     padding: 0 0.5rem;
   }
-  input[type="text"],
   select {
     width: 100%;
     padding: 0.5rem;
@@ -207,12 +221,4 @@ body {
     margin-bottom: 1rem;
     border: 1px solid #ccc;
     border-radius: 6px;
-  }
-  button {
-    background-color: #786fff;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    cursor: pointer;
   }

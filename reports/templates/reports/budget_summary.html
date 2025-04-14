@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Budget Report</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
         google.charts.load("current", {packages:["corechart"]});
         google.charts.setOnLoadCallback(drawChart);
@@ -21,16 +20,20 @@
                 vAxis: {
                     title: 'Category'
                 },
-                chartArea: {width: '70%', height: '70%'}
+                chartArea: {width: '70%', height: '70%'},
+                colors: [ '#1E1E24','#92140C'],
             };
 
             const chart = new google.visualization.BarChart(document.getElementById('chart_div'));
             chart.draw(data, options);
         }
     </script>
-</head>
-<body>
-    <h2>Budget Summary Report</h2>
-    <div id="chart_div" style="width: 900px; height: 500px;"></div>
-</body>
-</html>
+
+<div class="header">
+    <div class="pageTitle">Summary Report</div>
+</div>
+
+<div class="chartWrapper">
+    <div id="chart_div"></div>
+</div>
+{% endblock content %}
