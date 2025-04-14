@@ -2,64 +2,54 @@
 <html>
 <head>
   <title>Home page</title>
-  <style>
-    body {
-        background-color: #121212;
-        color: #ffffff;
-        margin: 0;
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
-
-    .header-container {
-        padding-top: 60px;
-    }
-
-    h1 {
-        font-size: 2.5em;
-        margin-bottom: 10px;
-    }
-
-    p {
-        font-size: 1.2em;
-        color: #cccccc;
-        margin-bottom: 30px;
-    }
-
-    .button-container {
-        margin-top: 20px;
-    }
-
-    button {
-        background-color: #1f1f1f;
-        color: #ffffff;
-        border: none;
-        padding: 10px 20px;
-        margin: 10px;
-        cursor: pointer;
-        font-size: 16px;
-        border-radius: 5px;
-    }
-
-    button:hover {
-        background-color: #333333;
-    }
-
-    a {
-        text-decoration: none;
-    }
-  </style>
+  {% load static %}
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Irish+Grover&family=Passion+One:wght@400;700;900&display=swap"
+  rel="stylesheet" />
+  <link rel="stylesheet" 
+        type="text/css"
+        href="{% static 'home/css/style.css' %}">
 </head>
+
 <body>
-  <div class="header-container">
-    <h1>Welcome to MoneyParce!</h1>
-    <p>Access our tools by logging in or registering an account.</p>
-    <div class="button-container">
-      <a href="/login"><button>Login</button></a>
+  <div class="header">
+    <img src="{% static 'img/logo.png' %}" style="height: 35px; margin-right: 10px;" />
+    <div class="logoName">MoneyParce</div>
+    <a class="aboutBtn" href="/about-us/">
+      <img src="{% static 'img/info.png' %}" style="height: 17px" />
+    </a>
+  </div>
+
+  <div class="mainWrapper">
+    <div> 
+      <div class="mainDesc">Experience the most seamless and intuitive way to manage your money.</div>
+      <div class="subDesc">With intuitive budgeting tools, managing your money is simple and stress-free.
+        Secure, streamlined, and designed for the way you bank today.</div>  
+    </div>
+    
+    <div class="loginWrapper">
+      <div class="loginTitle">Log in</div>
+      <!-- <a href="/login/"><button>Log In</button></a> -->
+      <form class="inputWrapper" method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <input type="text" class="loginInput" id="username" name="username" placeholder="Enter your username" required>
+        <input type="password" class="loginInput" id="password" name="password" placeholder="Enter your password" required>
+
+        <button class="loginBtn" type="submit">Log in</button>
+    </form>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <div class="signupLine">
+      <div>Don't have an account yet?</div>
+      <a class="signupBtn" href="{% url 'register' %}"><div>Sign Up</div></a> 
+    </div>
+    
     </div>
   </div>
-  <footer>
-    <p><a href="/about-us">About Us</a></p>
-  </footer>
+  
+
 </body>
 </html>
