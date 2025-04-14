@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Income, Expense, Budget
 from decimal import Decimal
+import json
 
 def dashboard_view(request):
     if request.method == 'POST':
@@ -56,4 +57,23 @@ def dashboard_view(request):
         'remaining_balance': remaining_balance,
         'budgets': budgets,
     }
+
+    #Build chart data
+    chart_data = [['Category', 'Used', {'role': 'style'}, 'Remaining']]
+    for budget in budgets:
+        used = float(budget.expenses_total())
+        total = float(budget.total_budget)
+        remaining = max(total - used, 0)
+        color = 'color: red' if used > total else None
+        chart_data.append([budget.name, used, color, remaining])
+
+    context = {
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'remaining_balance': remaining_balance,
+        'budgets': budgets,
+        'chart_data_json': json.dumps(chart_data),  # Pass to template
+    }
+
+
     return render(request, 'dashboard/dashboard.html', context)
