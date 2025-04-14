@@ -1,166 +1,125 @@
 <!DOCTYPE html>
 <html>
+{% load static %}
 <head>
-  <title>MoneyParce Dashboard</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: sans-serif;
-      background-color: #e9f0fb;
-    }
-    .dashboard-container {
-      display: flex;
-      max-width: 1200px;
-      margin: 2rem auto;
-      gap: 2rem;
-      padding: 0 1rem;
-    }
-    /* Left Panel: Budgets (Categories) */
-    .left-panel {
-      flex: 2;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-      position: relative;
-    }
-    .left-panel h2 {
-      margin-top: 0;
-    }
-    .budget-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .budget-list li {
-      padding: 0.5rem;
-      border-bottom: 1px solid #eee;
-    }
-    /* Hidden form for adding a budget */
-    #new-budget-form {
-      display: none;
-      margin-top: 1rem;
-    }
-    .add-budget-btn {
-      position: absolute;
-      right: 1rem;
-      bottom: 1rem;
-      background-color: #786fff;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    /* Right Panel: Totals & Forms */
-    .right-panel {
-      flex: 1;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-    }
-    .totals-box {
-      background: #f7f9fd;
-      padding: 1rem;
-      border-radius: 10px;
-      margin-bottom: 2rem;
-    }
-    .total-line {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-    }
-    fieldset {
-      border: 1px solid #ccc;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-bottom: 2rem;
-    }
-    legend {
-      font-weight: bold;
-      padding: 0 0.5rem;
-    }
-    input[type="text"],
-    select {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      background-color: #786fff;
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-  </style>
+  <title>MoneyParce Overview</title>
+  <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Irish+Grover&family=Passion+One:wght@400;700;900&display=swap"
+      rel="stylesheet" />
+  <link rel="stylesheet" 
+        type="text/css" 
+        href="{% static 'css/style.css' %}" />
 </head>
+
 <body>
-  <div class="dashboard-container">
-    <div class="left-panel">
-      <h2>Budgets</h2>
-      <ul class="budget-list">
+  <div class="sideBar">
+    <div class="sideBarHeader">
+      <img src="{% static 'img/logo.png' %}" style="height: 70px" />
+      <div id="LogoName">MoneyParce</div>
+      <div class="sideBarText">Welcome, user</div>
+    </div>
+    <div class="navigator">
+      <div class="navDiv">
+        <img src="{% static 'img/overview.png' %}" style="height: 20px; margin-right: 20px;" />
+        <div class="sideBarText">Overview</div>
+      </div>
+      
+      <div class="navDiv">
+        <img src="{% static 'img/tran.png' %}" style="height: 20px; margin-right: 20px;" />
+        <div class="sideBarText">Transactions</div>
+      </div>
+      
+      <div class="navDiv">
+        <img src="{% static 'img/report.png' %}" style="height: 20px; margin-right: 20px;" />
+        <div class="sideBarText">Reports</div>
+      </div>
+
+      <div class="navDiv">
+        <img src="{% static 'img/settings.png' %}" style="height: 20px; margin-right: 20px;" />
+        <div class="sideBarText">Settings</div>
+      </div>
+      
+      
+    </div>
+  </div>
+
+  <div class="mainWrapper">
+
+    <div class="header">
+      <div class="pageTitle">Overview</div>
+    </div>
+      
+    <div class="innerWrapper">
+
+
+
+    <div class="totalContainer">
+      <div class="totalRed">
+        <div class="totalTitle">Current Balance</div>
+        <div class="totalText">${{ remaining_balance }}</div>
+      </div>
+      <div class="totalBeige">
+        <div class="totalTitle">Total Income</div>
+        <div class="totalText">${{ total_income }}</div>
+      </div>
+      <div class="totalRed">
+        <div class="totalTitle">Total Expense</div>
+        <div class="totalText">${{ total_expenses }}</div>
+      </div>
+      <div class="totalBeige">
+        <div class="totalTitle">Expense over Income</div>
+        <div class="totalText">0.00%</div>
+      </div>
+    </div>
+
+    <div class="whiteBox">
+      <div class="whiteBoxTitle">Budgets</div>
+      <ul class="budgetList">
         {% for budget in budgets %}
-          <li><strong>{{ budget.name }}</strong>: {{ budget.expenses_total|floatformat:2 }}/{{ budget.total_budget }}</li>
+        <div class="budgetListDiv">
+          <div><strong>{{ budget.name }}</strong></div> 
+          <div>{{ budget.expenses_total|floatformat:2 }} / {{ budget.total_budget }}</div>
+        </div>
         {% empty %}
-          <li>No budgets created yet.</li>
+          <div class="totalText">No budgets created yet.</div>
         {% endfor %}
       </ul>
       <div id="new-budget-form">
         <form method="POST">
           {% csrf_token %}
-          <input type="text" name="budget_name" placeholder="Budget Name (Category)">
-          <input type="text" name="total_budget_new" placeholder="Budget Amount">
+          <input class="newbudgetInput" type="text" name="budget_name" placeholder="Budget Name (Category)">
+          <input class="newbudgetInput" type="text" name="total_budget_new" placeholder="Budget Amount">
           <button type="submit" name="submit_budget">Save Budget</button>
         </form>
       </div>
       <button type="button" class="add-budget-btn" onclick="toggleBudgetForm()">Add Budget</button>
     </div>
 
-    
-    <div class="right-panel">
-      <div class="totals-box">
-        <h3>Totals</h3>
-        <div class="total-line">
-          <span>Total Income:</span>
-          <span>${{ total_income }}</span>
-        </div>
-        <div class="total-line">
-          <span>Total Expenses:</span>
-          <span>${{ total_expenses }}</span>
-        </div>
-        <div class="total-line">
-          <span>Remaining Balance:</span>
-          <span>${{ remaining_balance }}</span>
-        </div>
+        
+        
+        
+
+        <form method="POST">
+          {% csrf_token %}
+          <fieldset>
+            <legend>Income</legend>
+            <input type="text" name="income_amount" placeholder="Income Amount">
+            <button type="submit" name="submit_income">+ Add Income</button>
+          </fieldset>
+          <fieldset>
+            <legend>Expense</legend>
+            <input type="text" name="expense_amount" placeholder="Expense Amount">
+            <select name="expense_budget">
+              <option value="">Select Category</option>
+              {% for budget in budgets %}
+                <option value="{{ budget.id }}">{{ budget.name }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit" name="submit_expense">+ Add Expense</button>
+          </fieldset>
+        </form>
       </div>
-      <form method="POST">
-        {% csrf_token %}
-        <fieldset>
-          <legend>Income</legend>
-          <input type="text" name="income_amount" placeholder="Income Amount">
-          <button type="submit" name="submit_income">+ Add Income</button>
-        </fieldset>
-        <fieldset>
-          <legend>Expense</legend>
-          <input type="text" name="expense_amount" placeholder="Expense Amount">
-          <select name="expense_budget">
-            <option value="">Select Category</option>
-            {% for budget in budgets %}
-              <option value="{{ budget.id }}">{{ budget.name }}</option>
-            {% endfor %}
-          </select>
-          <button type="submit" name="submit_expense">+ Add Expense</button>
-        </fieldset>
-      </form>
     </div>
-  </div>
 
   <script>
     function toggleBudgetForm() {

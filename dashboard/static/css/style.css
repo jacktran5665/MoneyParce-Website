@@ -1,0 +1,218 @@
+body {
+  font-family: "Inter";
+  background-color: #E5E5E5;
+
+  display: flex;
+  flex-direction: row;
+
+  margin:0px
+}
+
+.sideBar{
+  background-color: #1E1E24;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+
+  width: 225px;
+}
+
+.sideBarHeader{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 30px;
+  margin-bottom: 100px;
+}
+
+#LogoName{
+  font-size: 25px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.sideBarText {
+  font-size: 14px;
+}
+
+.navigator {
+  height: 160px;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.navDiv{
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.header {
+  background-color: white;
+  height: 60px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.pageTitle {
+  font-weight: 600;
+  font-size: 25px;
+  color:#92140C;
+  margin-left: 40px; 
+}
+
+.innerWrapper {
+  padding: 30px;
+}
+
+.totalContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 30px;
+
+  width: 949px;
+}
+
+.totalRed {
+  width: 220px;
+  height: 115px;
+  border-radius: 30px;
+
+  background-color: #92140C;
+  color: white;
+  font-weight: 600;
+
+  display:flex;
+  flex-direction: column;
+}
+
+.totalBeige {
+  width: 220px;
+  height: 115px;
+  border-radius: 30px;
+
+  background-color: #FFF8F0;
+  color: #1E1E24;
+  font-weight: 600;
+
+  display:flex;
+  flex-direction: column;
+}
+
+.totalTitle {
+  margin-top: 15px;
+  margin-bottom: 22px;
+  padding-left: 20px;
+  font-size: 14px;
+}
+
+.totalText {
+  padding-left: 20px;
+  font-size: 40px;
+}
+
+
+/* White Container Box */
+.whiteBox {
+  background-color: white;
+  color: #1E1E24;
+  border-radius: 30px;
+
+  width: 463px;
+  height: 260px;
+
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.whiteBoxTitle{
+  font-size: 20px;
+  font-weight: 600;
+
+  margin-top: 20px;
+  margin-right: 320px;
+}
+
+.budgetList {
+  height: 180px;
+  width: 370px;
+  margin-right: 50px;
+}
+
+.budgetListDiv{
+  font-size: 14px;
+  margin-bottom: 10px;
+
+  display:flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Hidden form for adding a budget */
+#new-budget-form {
+  display: none;
+  width: 463px;
+}
+
+.newBudgetInput {
+  font-size: 14px;
+  width: 463px;
+}
+
+.add-budget-btn {
+  width: 173px;
+  height: 36px;
+
+  font-size:14px;
+  font-weight:600;
+
+  background-color: #92140C;
+  color: white;
+  border-radius: 30px;
+
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+
+  /* Right Panel: Totals & Forms */
+  fieldset {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  legend {
+    font-weight: bold;
+    padding: 0 0.5rem;
+  }
+  input[type="text"],
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  button {
+    background-color: #786fff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
