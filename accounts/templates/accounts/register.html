@@ -63,13 +63,14 @@
     <div class="header-container">
         <h1>Register</h1>
     </div>
-    <form method="POST" action="/register">
+    <form method="POST" action="{% url 'register' %}">
+        {% csrf_token %}
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-
+        
         <label for="confirm_password">Re-enter Password:</label>
         <input type="password" id="confirm_password" name="confirm_password" required>
 
@@ -77,6 +78,10 @@
         <input type="text" id="security_question" name="security_question" required>
 
         <button type="submit">Register</button>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}    
     </form>
 </body>
 </html>
