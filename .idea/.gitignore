@@ -1,8 +1,17 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+**/__pycache__/
 */__pycache__/*
-*.pyc
-db.sqlite3
+
+# SQLite database
 *.sqlite3
+db.sqlite3
+
+# PyCharm / VSCode
+*.idea/
+*.vscode/
