@@ -14,5 +14,5 @@ __pycache__/
 db.sqlite3
 
 # PyCharm / VSCode
-*.idea/
-*.vscode/
+.idea/
+.vscode/
