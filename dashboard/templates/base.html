@@ -26,10 +26,13 @@
           <div class="sideBarText">Overview</div>
         </div>
       </a>
-      <div class="navDiv">
-        <img src="{% static 'img/tran.png' %}" style="height: 20px; margin-right: 20px;" />
-        <div class="sideBarText">Transactions</div>
-      </div>
+
+      <a class="sideBarText" href="{% url 'transactions_history' %}">
+        <div class="navDiv">
+          <img src="{% static 'img/tran.png' %}" style="height: 20px; margin-right: 20px;" />
+          <div class="sideBarText">Transactions</div>
+        </div>
+      </a>
       
       <a class="sideBarText" href="{% url 'budget_summary' %}">
         <div class="navDiv">
