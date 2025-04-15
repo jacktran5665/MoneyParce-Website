@@ -17,7 +17,7 @@
       <div class="brand">
         <img src="{% static 'img/logo.png' %}" alt="MoneyParce" height="70" />
         <h1>MoneyParce</h1>
-        <p>Welcome, {% if user.is_authenticated %}{{ user.username }}{% else %}Sara{% endif %}</p>
+        <p>Welcome, {% if user.is_authenticated %}{{ user.username }}{% else %}User{% endif %}</p>
       </div>
 
       <div class="nav-menu">
