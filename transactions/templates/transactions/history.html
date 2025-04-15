@@ -88,7 +88,7 @@
               <tbody>
                 {% for transaction in transactions %}
                   <tr>
-                    <td class="date-column">4/{{ forloop.counter|add:10 }}</td>
+                    <td class="date-column">{{ forloop.counter}}</td>
                     <td class="desc-column">
                       {% if transaction.type == 'Income' %}
                         Income Payment

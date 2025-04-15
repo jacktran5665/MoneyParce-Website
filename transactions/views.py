@@ -9,7 +9,7 @@ def transaction_history(request):
     transaction_type = request.GET.get('type', 'all')
     category_id = request.GET.get('category', None)
 
-    # Base querysets - order by id since created_at isn't available
+    # Base querysets - order by id
     incomes = Income.objects.all().order_by('-id')  # Latest first based on ID
     expenses = Expense.objects.all().order_by('-id')  # Latest first based on ID
 
@@ -44,7 +44,7 @@ def transaction_history(request):
     # Sort transactions by id (newest first)
     transactions.sort(key=lambda x: x['id'], reverse=True)
 
-    # Pagination (showing 20 transactions per page)
+    # Pagination (showing 10 transactions per page)
     page = request.GET.get('page', 1)
     paginator = Paginator(transactions, 10)
 
