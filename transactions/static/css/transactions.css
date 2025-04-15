@@ -1,0 +1,353 @@
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+.page-container {
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #1E1E24;
+  color: white;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.brand h1 {
+  margin: 0.5rem 0;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.brand p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin: 0.25rem 0;
+}
+
+.nav-menu {
+  margin-top: 2rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  color: white;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+}
+
+.nav-item.active {
+  background-color: #2A2A30;
+  border-left: 4px solid #92140C;
+  padding-left: calc(2rem - 4px);
+}
+
+.nav-item svg {
+  margin-right: 0.75rem;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 0;
+}
+
+.header {
+  background-color: white;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header h1 {
+  margin: 0;
+  color: #92140C;
+  font-weight: 600;
+}
+
+.content {
+  padding: 2rem;
+}
+
+/* Card Styles */
+.card {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+/* Transaction List */
+.transaction-list {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transaction-list tr {
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-list tr:last-child {
+  border-bottom: none;
+}
+
+.transaction-list td {
+  padding: 1rem 0.5rem;
+  color: #333;
+}
+
+.date-column {
+  width: 15%;
+  font-weight: 500;
+}
+
+.desc-column {
+  width: 60%;
+}
+
+.transaction-amount {
+  width: 20%;
+  font-weight: 600;
+  text-align: right;
+}
+
+.action-column {
+  width: 5%;
+  text-align: right;
+}
+
+/* Filter Styles */
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  font-family: "Inter", sans-serif;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-top: 1rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+}
+
+.btn-primary {
+  background-color: #92140C;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.pagination a {
+  color: #333;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  margin: 0 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.pagination a:hover {
+  background-color: #f5f5f5;
+}
+
+.pagination .current-page {
+  background-color: #92140C;
+  color: white;
+  border: 1px solid #92140C;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0.25rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+}
+
+/* Delete button */
+.delete-btn {
+  background: none;
+  border: none;
+  color: #92140C;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 1rem;
+  color: #777;
+  font-style: italic;
+}
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+  height: 300px;
+  margin-top: 1rem;
+  padding-left: 50px;
+}
+
+.y-axis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.y-label {
+  font-size: 12px;
+  color: #888;
+}
+
+.chart-area {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 250px;
+}
+
+.month-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bars {
+  display: flex;
+  height: 220px;
+  align-items: flex-end;
+}
+
+.income-bar {
+  width: 20px;
+  background-color: #92140C;
+  border-radius: 2px 2px 0 0;
+  margin-right: 2px;
+}
+
+.expense-bar {
+  width: 20px;
+  background-color: #333;
+  border-radius: 2px 2px 0 0;
+  margin-left: 2px;
+}
+
+.month-label {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #888;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+    overflow: hidden;
+  }
+
+  .brand h1, .brand p, .nav-item svg + text {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 60px;
+  }
+
+  .filter-form {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .date-column {
+    width: 20%;
+  }
+
+  .desc-column {
+    width: 55%;
+  }
+
+  .transaction-amount {
+    width: 20%;
+  }
+
+  .action-column {
+    width: 5%;
+  }
+}

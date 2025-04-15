@@ -25,3 +25,4 @@ class Expense(models.Model):
 
     def __str__(self):
         return f"Expense: ${self.amount} for {self.category.name}"
+
