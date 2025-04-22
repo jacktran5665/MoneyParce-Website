@@ -1,10 +1,8 @@
 body {
-  font-family: "Inter";
-  background-color: #E5E5E5;
-
+  font-family: "Inter", sans-serif;
+  background-color: #e5e5e5;
   display: flex;
   flex-direction: row;
-
   margin:0px
 }
 
@@ -14,9 +12,9 @@ body {
   flex-direction: column;
   align-items: center;
   color: white;
-
-  width: 225px;
-  height:auto;
+  width: 250px;
+  height:100vh;
+  display: flex;
 }
 
 .sideBarHeader{
@@ -24,26 +22,25 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
 
-  margin-top: 30px;
+  margin-top: 2rem;
   margin-bottom: 100px;
 }
 
-#LogoName{
-  font-size: 25px;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
 .sideBarText {
-  font-size: 14px;
+  font-size: 16px;
   color: white;
   text-decoration: none;
+  font-weight: 500;
 }
-.sideBarText:hover {
-  color: #92140C;
-  transition: 0.4s;
+
+#LogoName {
+  margin: 0.5rem 0;
+  font-weight: 550;
+  font-size: 1.5rem;
 }
+
 
 .navigator {
   height: 160px;
@@ -60,10 +57,21 @@ body {
   align-items: flex-start;
 }
 
+.nav-item {
+  color: white;
+  text-decoration: none;
+  padding: 0.75rem 3rem;
+  display: block;
+}
+
+.nav-item.active {
+  background-color: #2A2A30;
+  border-left: 4px solid #92140C;
+}
+
 .header {
   background-color: white;
-  height: 60px;
-
+  height: 71px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -71,9 +79,15 @@ body {
 
 .pageTitle {
   font-weight: 600;
-  font-size: 25px;
+  font-size: 35px;
   color:#92140C;
-  margin-left: 40px; 
+  margin-left: 40px;
+}
+
+.sideBarHeader p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin: 0.25rem 0;
 }
 
 .innerWrapper {

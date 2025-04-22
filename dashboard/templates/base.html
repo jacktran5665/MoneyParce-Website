@@ -16,10 +16,9 @@
     <div class="sideBarHeader">
       <img src="{% static 'img/logo.png' %}" style="height: 70px" />
       <div id="LogoName">MoneyParce</div>
-      <div class="sideBarText">Welcome, user</div>
+      <p>Welcome, {% if user.is_authenticated %}{{ user.username }}{% else %}User{% endif %}</p>
     </div>
     <div class="navigator">
-
       <a class="sideBarText" href="{% url 'dashboard' %}">
         <div class="navDiv">
           <img src="{% static 'img/overview.png' %}" style="height: 20px; margin-right: 20px;" />
@@ -33,7 +32,7 @@
           <div class="sideBarText">Transactions</div>
         </div>
       </a>
-      
+
       <a class="sideBarText" href="{% url 'budget_summary' %}">
         <div class="navDiv">
           <img src="{% static 'img/report.png' %}" style="height: 20px; margin-right: 20px;" />
@@ -45,8 +44,8 @@
         <img src="{% static 'img/settings.png' %}" style="height: 20px; margin-right: 20px;" />
         <div class="sideBarText">Settings</div>
       </div>
-      
-      
+
+
         </div>
     </div>
 
