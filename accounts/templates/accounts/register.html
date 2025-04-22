@@ -1,15 +1,27 @@
-{% block content %}
-<div class="register-wrapper">
-  <div class="card">
-    <div class="card-body">
-      <h2>Sign Up</h2>
-      <hr />
-      <form method="POST">
-        {% csrf_token %}
-        {{ template_data.form.as_p }}
-        <button type="submit" class="btn">Sign Up</button>
-      </form>
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link rel="stylesheet" href="{% static 'css/registered.css' %}">
+</head>
+<body>
+  {% block content %}
+  <div class="register-wrapper">
+    <div class="card">
+      <div class="card-body">
+        <h2>Sign Up</h2>
+        <hr />
+        <form method="POST">
+          {% csrf_token %}
+          {{ template_data.form.as_p }}
+          <button type="submit" class="btn">Sign Up</button>
+        </form>
+      </div>
     </div>
   </div>
-</div>
-{% endblock content %}
+  {% endblock content %}
+</body>
+</html>
