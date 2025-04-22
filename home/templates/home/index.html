@@ -30,7 +30,7 @@
     <div class="loginWrapper">
       <div class="loginTitle">Log in</div>
       <!-- <a href="/login/"><button>Log In</button></a> -->
-      <form class="inputWrapper" method="POST" action="{% url 'login' %}">
+      <form class="inputWrapper" method="POST" action="">
         {% csrf_token %}
         <input type="text" class="loginInput" id="username" name="username" placeholder="Enter your username" required>
         <input type="password" class="loginInput" id="password" name="password" placeholder="Enter your password" required>
@@ -44,7 +44,7 @@
 
     <div class="signupLine">
       <div>Don't have an account yet?</div>
-      <a class="signupBtn" href="{% url 'register' %}"><div>Sign Up</div></a> 
+      <a class="signupBtn" href="{% url 'accounts.signup' %}"><div>Sign Up</div></a> 
     </div>
     
     </div>

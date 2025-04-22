@@ -1,34 +1,82 @@
-from django.db import models
-from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, redirect
+from decimal import Decimal
+from dashboard.models import Income, Expense, Budget
 
-class Budget(models.Model):
-    name = models.CharField(max_length=100)
-    total_budget = models.DecimalField(max_digits=10, decimal_places=2)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+@login_required
+def transaction_history(request):
+    ttype       = request.GET.get('type', 'all')
+    category_id = request.GET.get('category')
 
-    def expenses_total(self):
-        result = self.expense_set.aggregate(total=models.Sum('amount'))['total']
-        return result if result is not None else 0
+    # 1) Scope & order by real timestamp
+    incomes  = Income.objects.filter(user=request.user).order_by('-created_at')
+    expenses = Expense.objects.filter(user=request.user).order_by('-created_at')
 
-    def __str__(self):
-        return f"{self.name} - ${self.total_budget}"
+    # 2) Apply type filter
+    if ttype == 'income':
+        expenses = Expense.objects.none()
+    elif ttype == 'expense':
+        incomes = Income.objects.none()
 
-class Income(models.Model):
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(default=timezone.now)
-    description = models.CharField(max_length=255, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    # 3) Apply category filter (only expenses have a category)
+    if category_id and category_id.isdigit():
+        expenses = expenses.filter(category_id=category_id)
 
-    def __str__(self):
-        return f"Income: ${self.amount}"
+    # 4) Build a unified list, carrying date & description
+    transactions = []
+    for inc in incomes:
+        transactions.append({
+            'type':        'Income',
+            'id':          inc.id,
+            'amount':      inc.amount,
+            'category':    'Income',
+            'date':        inc.created_at,
+            'description': inc.description or '',
+        })
+    for exp in expenses:
+        transactions.append({
+            'type':        'Expense',
+            'id':          exp.id,
+            'amount':      exp.amount,
+            'category':    exp.category.name,
+            'date':        exp.created_at,
+            'description': exp.description or '',
+        })
 
-class Expense(models.Model):
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.ForeignKey(Budget, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(default=timezone.now)
-    description = models.CharField(max_length=255, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    # 5) Sort by date (newest first)
+    transactions.sort(key=lambda x: x['date'], reverse=True)
 
-    def __str__(self):
-        return f"Expense: ${self.amount} for {self.category.name}"
+    # 6) Paginate (10 per page)
+    page      = request.GET.get('page', 1)
+    paginator = Paginator(transactions, 10)
+    try:
+        page_obj = paginator.page(page)
+    except (PageNotAnInteger, EmptyPage):
+        page_obj = paginator.page(1)
+
+    # 7) Budgets dropdown (also scoped to user)
+    budgets = Budget.objects.filter(user=request.user).order_by('name')
+
+    return render(request, 'transactions/history.html', {
+        'transactions':      page_obj,
+        'budgets':           budgets,
+        'selected_type':     ttype,
+        'selected_category': category_id,
+    })
+
+
+@login_required
+def delete_transaction(request):
+    if request.method == 'POST':
+        ttype = request.POST.get('transaction_type')
+        tid   = request.POST.get('transaction_id')
+
+        if ttype == 'income':
+            Income.objects.filter(id=tid, user=request.user).delete()
+        elif ttype == 'expense':
+            Expense.objects.filter(id=tid, user=request.user).delete()
+
+        return redirect(request.POST.get('next', 'transactions_history'))
+
+    return redirect('transactions_history')

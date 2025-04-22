@@ -1,71 +1,63 @@
-from django.shortcuts import render, redirect
-from dashboard.models import Income, Expense, Budget
-from decimal import Decimal
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render, redirect
+from .models import Income, Expense, Budget
 
-
+@login_required
 def transaction_history(request):
-    # Get filter parameters from the request
-    transaction_type = request.GET.get('type', 'all')
-    category_id = request.GET.get('category', None)
+    ttype       = request.GET.get('type', 'all')
+    category_id = request.GET.get('category')
 
-    # Base querysets - order by id
-    incomes = Income.objects.all().order_by('-id')  # Latest first based on ID
-    expenses = Expense.objects.all().order_by('-id')  # Latest first based on ID
+    # Scope to this user and sort by newest first
+    incomes  = Income.objects.filter(user=request.user).order_by('-created_at')
+    expenses = Expense.objects.filter(user=request.user).order_by('-created_at')
 
-    # Apply filters
-    if transaction_type == 'income':
+    if ttype == 'income':
         expenses = Expense.objects.none()
-    elif transaction_type == 'expense':
+    elif ttype == 'expense':
         incomes = Income.objects.none()
 
     if category_id and category_id.isdigit():
         expenses = expenses.filter(category_id=category_id)
 
-    # Combine income and expenses into one list of transactions
     transactions = []
-
-    for income in incomes:
+    for inc in incomes:
         transactions.append({
-            'type': 'Income',
-            'amount': income.amount,
+            'type':     'Income',
+            'amount':   inc.amount,
             'category': 'Income',
-            'id': income.id
+            'date':     inc.created_at,
+            'id':       inc.id,
         })
-
-    for expense in expenses:
+    for exp in expenses:
         transactions.append({
-            'type': 'Expense',
-            'amount': expense.amount,
-            'category': expense.category.name,
-            'id': expense.id
+            'type':     'Expense',
+            'amount':   exp.amount,
+            'category': exp.category.name,
+            'date':     exp.created_at,
+            'id':       exp.id,
         })
 
-    # Sort transactions by id (newest first)
-    transactions.sort(key=lambda x: x['id'], reverse=True)
+    # Sort the combined list by datetime (newest first)
+    transactions.sort(key=lambda x: x['date'], reverse=True)
 
-    # Pagination (showing 10 transactions per page)
-    page = request.GET.get('page', 1)
+    # Paginate
+    page      = request.GET.get('page', 1)
     paginator = Paginator(transactions, 10)
-
     try:
-        transactions_page = paginator.page(page)
-    except PageNotAnInteger:
-        transactions_page = paginator.page(1)
-    except EmptyPage:
-        transactions_page = paginator.page(paginator.num_pages)
+        page_obj = paginator.page(page)
+    except (PageNotAnInteger, EmptyPage):
+        page_obj = paginator.page(1)
 
-    # Get all budget categories for filtering
-    budgets = Budget.objects.all().order_by('name')
+    budgets = Budget.objects.filter(user=request.user).order_by('name')
 
-    context = {
-        'transactions': transactions_page,
-        'budgets': budgets,
-        'selected_type': transaction_type,
+    return render(request, 'transactions/history.html', {
+        'transactions':      page_obj,
+        'budgets':           budgets,
+        'selected_type':     ttype,
         'selected_category': category_id,
-    }
+    })
 
-    return render(request, 'transactions/history.html', context)
 
 
 def delete_transaction(request):
