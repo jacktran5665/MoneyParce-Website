@@ -33,7 +33,7 @@ def transaction_history(request):
         transactions.append({
             'type':     'Expense',
             'amount':   exp.amount,
-            'category': exp.category.name,
+            'category': exp.category.name if exp.category else "Automatic",
             'date':     exp.created_at,
             'id':       exp.id,
         })
@@ -59,7 +59,7 @@ def transaction_history(request):
     })
 
 
-
+@login_required
 def delete_transaction(request):
     if request.method == 'POST':
         transaction_type = request.POST.get('transaction_type')
@@ -67,13 +67,13 @@ def delete_transaction(request):
 
         if transaction_type == 'income':
             try:
-                income = Income.objects.get(id=transaction_id)
+                income = Income.objects.get(id=transaction_id, user=request.user)
                 income.delete()
             except Income.DoesNotExist:
                 pass
         elif transaction_type == 'expense':
             try:
-                expense = Expense.objects.get(id=transaction_id)
+                expense = Expense.objects.get(id=transaction_id, user=request.user)
                 expense.delete()
             except Expense.DoesNotExist:
                 pass

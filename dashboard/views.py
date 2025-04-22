@@ -2,6 +2,20 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts              import render, redirect
 from decimal                       import Decimal
 from .models                       import Income, Expense, Budget
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from plaid.api import plaid_api
+from django.conf import settings
+from .models import PlaidItem
+import datetime
+import json
+import plaid
+from plaid.model.link_token_create_request import LinkTokenCreateRequest
+from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
+from plaid.model.transactions_get_request import TransactionsGetRequest
+from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
+from plaid.model.country_code import CountryCode
+from plaid.model.products import Products
 
 @login_required
 def dashboard_view(request):
@@ -47,3 +61,103 @@ def dashboard_view(request):
         'remaining_balance': remaining_balance,
         'budgets':           budgets,
     })
+
+
+@login_required
+def create_link_token(request):
+    configuration = plaid.Configuration(
+        host=plaid.Environment.Sandbox,
+        api_key={
+            'clientId': settings.PLAID_CLIENT_ID,
+            'secret': settings.PLAID_SECRET
+        }
+    )
+    client = get_plaid_client()
+
+    request_data = LinkTokenCreateRequest(
+        user={"client_user_id": str(request.user.id)},
+        client_name="MoneyParce",
+        products=[Products("transactions")],
+        country_codes=[CountryCode("US")],
+        language="en"
+    )
+
+    response = client.link_token_create(request_data)
+    return JsonResponse(response.to_dict())
+
+@csrf_exempt
+@login_required
+def exchange_public_token(request):
+    body = json.loads(request.body)
+    public_token = body.get('public_token')
+
+    configuration = plaid.Configuration(
+        host=plaid.Environment.Sandbox,
+        api_key={
+            'clientId': settings.PLAID_CLIENT_ID,
+            'secret': settings.PLAID_SECRET
+        }
+    )
+    client = get_plaid_client()
+
+    exchange_request = ItemPublicTokenExchangeRequest(public_token=public_token)
+    exchange_response = client.item_public_token_exchange(exchange_request)
+
+    PlaidItem.objects.update_or_create(
+        user=request.user,
+        defaults={
+            'access_token': exchange_response.access_token,
+            'item_id': exchange_response.item_id
+        }
+    )
+    return JsonResponse({'status': 'access token saved'})
+
+@login_required
+def fetch_transactions(request):
+    try:
+        plaid_item = PlaidItem.objects.get(user=request.user)
+    except PlaidItem.DoesNotExist:
+        return JsonResponse({'error': 'No linked Plaid account'}, status=400)
+
+    configuration = plaid.Configuration(
+        host=plaid.Environment.Sandbox,
+        api_key={
+            'clientId': settings.PLAID_CLIENT_ID,
+            'secret': settings.PLAID_SECRET
+        }
+    )
+    client = get_plaid_client()
+
+    end_date = datetime.datetime.today()
+    start_date = end_date - datetime.timedelta(days=30)
+
+    request_data = TransactionsGetRequest(
+        access_token=plaid_item.access_token,
+        start_date=start_date.date(),
+        end_date=end_date.date(),
+        options=TransactionsGetRequestOptions(count=20)
+    )
+
+    response = client.transactions_get(request_data)
+    transactions = response['transactions']
+
+    for txn in transactions:
+        amount = Decimal(txn['amount'])
+        name = txn['name']
+        Expense.objects.create(
+            user=request.user,
+            amount=amount,
+            category=None,  # optional: match to a Budget
+        )
+
+    return JsonResponse({'status': 'imported', 'count': len(transactions)})
+
+def get_plaid_client():
+    configuration = plaid.Configuration(
+        host=plaid.Environment.Sandbox,
+        api_key={
+            'clientId': settings.PLAID_CLIENT_ID,
+            'secret': settings.PLAID_SECRET
+        }
+    )
+    return plaid_api.PlaidApi(plaid.ApiClient(configuration))

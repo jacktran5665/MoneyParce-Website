@@ -42,3 +42,12 @@ class Expense(models.Model):
 
     def __str__(self):
         return f"Expense: ${self.amount} — {self.category.name}"
+
+class PlaidItem(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    access_token = models.CharField(max_length=120)
+    item_id = models.CharField(max_length=100)
+    institution_name = models.CharField(max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} — {self.institution_name or 'Plaid Item'}"

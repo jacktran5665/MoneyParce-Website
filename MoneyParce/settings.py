@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-dwnfdk-t(ms)iscxk=w@gblc*qd0ua%c!bgwngq^-r07*3(+hd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -127,3 +127,8 @@ APPEND_SLASH = True
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Plaid API settings (sandbox keys for dev/testing)
+PLAID_CLIENT_ID = '6807ebaecbbe610020be3c05'
+PLAID_SECRET = 'f9676ee8a4132fc886e392b8d28e9f'
+PLAID_ENV = 'sandbox'
