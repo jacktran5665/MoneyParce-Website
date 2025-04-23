@@ -113,6 +113,24 @@ a {
     text-decoration: none;
 }
 
+.forgotLine{
+    font-size:14px;
+    color: #d5d5d5;
+
+    display:flex;
+    margin-top: 10px;
+}
+
+.forgotBtn{
+    margin-left: 10px;
+    font-size: 14px;
+    border: none;
+    color: #d5d5d5;
+}
+.forgotBtn:hover {
+    text-decoration: underline;
+}
+
 .signupLine{
     font-size:14px;
     color: #d5d5d5;

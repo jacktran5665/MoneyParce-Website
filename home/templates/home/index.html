@@ -43,6 +43,10 @@
         <div class="error">{{ error }}</div>
     {% endif %}
 
+    <div class="forgotLine">
+      <div>Forgot your Password?</div>
+      <a class="forgotBtn" href="{% url 'forgot_password' %}"><div>Reset</div></a>
+    </div>
     <div class="signupLine">
       <div>Don't have an account yet?</div>
       <a class="signupBtn" href="{% url 'accounts.signup' %}"><div>Sign Up</div></a> 
