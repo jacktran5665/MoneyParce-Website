@@ -311,3 +311,19 @@ margin-top: 30px;
 
   border: 1px solid #1E1E24;
 }
+
+/* Warning message */
+.messages {
+  margin: 10px auto;
+  width: 80%;
+}
+.alert {
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}

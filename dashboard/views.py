@@ -27,14 +27,21 @@ def dashboard_view(request):
         elif 'submit_expense' in request.POST:
             amt = Decimal(request.POST.get('expense_amount', '0') or '0')
             bid = request.POST.get('expense_budget')
-            try:
-                budget_obj = Budget.objects.get(id=bid, user=request.user)
-            except Budget.DoesNotExist:
-                budget_obj = None
-            if budget_obj:
-                Expense.objects.create(user=request.user,
-                                       amount=amt,
-                                       category=budget_obj)
+
+            if not bid:
+                from django.contrib import messages
+                messages.error(request, "Please select a budget category before adding an expense.")
+            else:
+                try:
+                    budget_obj = Budget.objects.get(id=bid, user=request.user)
+                    Expense.objects.create(user=request.user,
+                                           amount=amt,
+                                           category=budget_obj)
+                except Budget.DoesNotExist:
+                    from django.contrib import messages
+                    messages.error(request, "Selected budget category does not exist.")
+
+            return redirect('dashboard')
 
         elif 'submit_budget' in request.POST:
             name = request.POST.get('budget_name','').strip()
