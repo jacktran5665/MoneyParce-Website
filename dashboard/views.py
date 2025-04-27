@@ -159,6 +159,10 @@ def fetch_transactions(request):
 
     return JsonResponse({'status': 'imported', 'count': len(transactions)})
 
+@login_required
+def settings_view(request):
+    return render(request, 'settings/settings.html')
+
 def get_plaid_client():
     configuration = plaid.Configuration(
         host=plaid.Environment.Sandbox,

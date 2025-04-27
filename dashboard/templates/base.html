@@ -39,12 +39,12 @@
           <div class="sideBarText">Report</div>
         </div>
       </a>
-
-      <div class="navDiv">
-        <img src="{% static 'img/settings.png' %}" style="height: 20px; margin-right: 20px;" />
-        <div class="sideBarText">Settings</div>
-      </div>
-
+      <a class="sideBarText" href="{% url 'settings' %}">
+        <div class="navDiv">
+          <img src="{% static 'img/settings.png' %}" style="height: 20px; margin-right: 20px;" />
+          <div class="sideBarText">Settings</div>
+        </div>
+      </a>
 
         </div>
     </div>

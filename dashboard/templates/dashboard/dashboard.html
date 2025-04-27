@@ -83,49 +83,16 @@
         </div>
     </form>
 
-    <!-- Plaid Link Button -->
-    <div class="whiteBox">
-      <div class="whiteBoxTitle">BankSync</div>
-      <button id="link-button" class="addBtn">Link a Bank Account</button>
-    </div>
-  </div>
-
-  <script>
-    function toggleBudgetForm() {
-      var form = document.getElementById('new-budget-form');
-      if (form.style.display === 'none' || form.style.display === '') {
-        form.style.display = 'block';
-      } else {
-        form.style.display = 'none';
+    <script>
+      function toggleBudgetForm() {
+        var form = document.getElementById('new-budget-form');
+        if (form.style.display === 'none' || form.style.display === '') {
+          form.style.display = 'block';
+        } else {
+          form.style.display = 'none';
+        }
       }
-    }
-  </script>
-
-  <!-- Plaid Link Script -->
-  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
-  <script>
-    fetch("{% url 'create_link_token' %}")
-      .then(res => res.json())
-      .then(data => {
-        const handler = Plaid.create({
-          token: data.link_token,
-          onSuccess: function(public_token, metadata) {
-            fetch("{% url 'exchange_public_token' %}", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}"
-              },
-              body: JSON.stringify({ public_token: public_token })
-            }).then(() => {
-              alert("Bank account linked! Fetching transactions...");
-              fetch("{% url 'fetch_transactions' %}")
-                .then(() => window.location.reload());
-            });
-          },
-        });
-        document.getElementById("link-button").onclick = () => handler.open();
-      });
-  </script>
+    </script>
+  </div>
 </div>
 {% endblock content %}

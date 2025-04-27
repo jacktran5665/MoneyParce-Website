@@ -13,7 +13,13 @@ __pycache__/
 */__pycache__/*
 **/*.pyc
 
-
 # PyCharm / VSCode
 .idea/
 .vscode/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore macOS system files
+.DS_Store
