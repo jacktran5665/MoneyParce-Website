@@ -1,3 +1,4 @@
+{# templates/dashboard/dashboard.html #}
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
@@ -7,92 +8,160 @@
 
 {% if messages %}
 <div class="messages">
-    {% for message in messages %}
+  {% for message in messages %}
     <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-        {{ message }}
+      {{ message }}
     </div>
-    {% endfor %}
+  {% endfor %}
 </div>
 {% endif %}
 
 <div class="innerWrapper">
-<div class="innerWrapper">
-    <div class="totalContainer">
-      <div class="totalRed">
-        <div class="totalTitle">Current Balance</div>
-        <div class="totalText">${{ remaining_balance }}</div>
-      </div>
-      <div class="totalBeige">
-        <div class="totalTitle">Total Income</div>
-        <div class="totalText">${{ total_income }}</div>
-      </div>
-      <div class="totalRed">
-        <div class="totalTitle">Total Expense</div>
-        <div class="totalText">${{ total_expenses }}</div>
-      </div>
-      <div class="totalBeige">
-        <div class="totalTitle">Expense over Income</div>
-        <div class="totalText">0.00%</div>
-      </div>
+  <div class="totalContainer">
+    <div class="totalRed">
+      <div class="totalTitle">Current Balance</div>
+      <div class="totalText">${{ remaining_balance }}</div>
     </div>
+    <div class="totalBeige">
+      <div class="totalTitle">Total Income</div>
+      <div class="totalText">${{ total_income }}</div>
+    </div>
+    <div class="totalRed">
+      <div class="totalTitle">Total Expense</div>
+      <div class="totalText">${{ total_expenses }}</div>
+    </div>
+    <div class="totalBeige">
+      <div class="totalTitle">Expense over Income</div>
+      <div class="totalText">0.00%</div>
+    </div>
+  </div>
 
-    <div class="whiteBoxWrapper">
+  <div class="whiteBoxWrapper">
     <div class="whiteBox">
       <div class="whiteBoxTitle">Budgets</div>
+
       <ul class="budgetList">
         {% for budget in budgets %}
         <div class="budgetListDiv">
-          <div><strong>{{ budget.name }}</strong></div> 
+          <div>
+            <strong>{{ budget.name }}</strong>
+            <button class="smallLink"
+                    onclick="editBudget('{{ budget.id }}',
+                                        '{{ budget.name|escapejs }}',
+                                        '{{ budget.total_budget }}')">
+              edit
+            </button>
+          </div>
           <div>{{ budget.expenses_total|floatformat:2 }} / {{ budget.total_budget }}</div>
         </div>
-        {% empty %}
-          <div class="totalTitle">* No budgets yet.</div>
-        {% endfor %}
+        {% empty %}<div class="totalTitle">* No budgets yet.</div>{% endfor %}
       </ul>
-      <div id="new-budget-form">
+      <div id="new-budget-form" style="display:none;">
         <form method="POST">
           {% csrf_token %}
+          <input type="hidden" name="budget_id" id="budget-id-field">
           <div class="formFormat">
-            <input class="newbudgetInput" type="text" name="budget_name" placeholder="Category">
-            <input class="newbudgetInput" type="text" name="total_budget_new" placeholder="Amount">
-            <button class="newbudgetBtn" type="submit" name="submit_budget">Save Budget</button>
+            <input class="newbudgetInput" id="budget-name-field"
+                   type="text" name="budget_name" placeholder="Category">
+            <input class="newbudgetInput" id="budget-total-field"
+                   type="text" name="total_budget_new" placeholder="Amount">
+            <button class="newbudgetBtn" id="budget-submit-btn"
+                    type="submit" name="submit_budget">Save Budget</button>
+            <button class="deleteBtn"   id="budget-delete-btn"
+                    type="submit" name="delete_budget"
+                    style="display:none;">
+              Delete
+            </button>
           </div>
         </form>
       </div>
+
       <button type="button" class="addBtn" onclick="toggleBudgetForm()">Add Budget</button>
     </div>
-
     <form method="POST">
       {% csrf_token %}
-        <div class="incomeBox">
-          <div class="whiteBoxTitle">Income</div>
-          <input class="inputBox" type="text" name="income_amount" placeholder="Income Amount">
-          <button class="addBtn" type="submit" name="submit_income">Add Income</button>
-        </div>
-        
-        <div class="expenseBox">
-          <div class="whiteBoxTitle">Expense</div>
-          <input class="inputBox" type="text" name="expense_amount" placeholder="Expense Amount">
-          <select class="selectBox" name="expense_budget">
-            <option value="">Select Category</option>
-            {% for budget in budgets %}
-            <option value="{{ budget.id }}">{{ budget.name }}</option>
-            {% endfor %}
-          </select>
-          <button class="addBtn" type="submit" name="submit_expense">Add Expense</button>
-        </div>
-    </form>
+      <div class="incomeBox">
+        <div class="whiteBoxTitle">Income</div>
+        <input class="inputBox" type="text" name="income_amount" placeholder="Income Amount">
+        <button class="addBtn" type="submit" name="submit_income">Add Income</button>
+      </div>
 
-    <script>
-      function toggleBudgetForm() {
-        var form = document.getElementById('new-budget-form');
-        if (form.style.display === 'none' || form.style.display === '') {
-          form.style.display = 'block';
-        } else {
-          form.style.display = 'none';
-        }
-      }
-    </script>
+      <div class="expenseBox">
+        <div class="whiteBoxTitle">Expense</div>
+        <input class="inputBox" type="text" name="expense_amount" placeholder="Expense Amount">
+        <select class="selectBox" name="expense_budget">
+          <option value="">Select Category</option>
+          {% for budget in budgets %}
+            <option value="{{ budget.id }}">{{ budget.name }}</option>
+          {% endfor %}
+        </select>
+        <button class="addBtn" type="submit" name="submit_expense">Add Expense</button>
+      </div>
+    </form>
   </div>
+
+  <script>
+    function toggleBudgetForm() {
+      const form = document.getElementById('new-budget-form');
+      form.style.display === 'none' || form.style.display === ''
+        ? showAddMode() 
+        : form.style.display = 'none';
+    }
+
+    function editBudget(id, name, total) {
+      const form = document.getElementById('new-budget-form');
+      form.style.display = 'block';
+
+      budgetId.value    = id;
+      budgetName.value  = name;
+      budgetTotal.value = total;
+
+      submitBtn.textContent = 'Update';
+      submitBtn.name        = 'update_budget';
+      deleteBtn.style.display = 'inline-block';
+    }
+
+    function showAddMode() {
+      formElem.style.display = 'block';
+      budgetId.value = budgetName.value = budgetTotal.value = '';
+      submitBtn.textContent = 'Save Budget';
+      submitBtn.name        = 'submit_budget';
+      deleteBtn.style.display = 'none';
+    }
+
+    const formElem    = document.getElementById('new-budget-form');
+    const budgetId    = document.getElementById('budget-id-field');
+    const budgetName  = document.getElementById('budget-name-field');
+    const budgetTotal = document.getElementById('budget-total-field');
+    const submitBtn   = document.getElementById('budget-submit-btn');
+    const deleteBtn   = document.getElementById('budget-delete-btn');
+  </script>
+
+  <!-- Plaid Link Script -->
+  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+  <script>
+    fetch("{% url 'create_link_token' %}")
+      .then(res => res.json())
+      .then(data => {
+        const handler = Plaid.create({
+          token: data.link_token,
+          onSuccess: function(public_token, metadata) {
+            fetch("{% url 'exchange_public_token' %}", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+              },
+              body: JSON.stringify({ public_token: public_token })
+            }).then(() => {
+              alert("Bank account linked! Fetching transactions...");
+              fetch("{% url 'fetch_transactions' %}")
+                .then(() => window.location.reload());
+            });
+          },
+        });
+        document.getElementById("link-button").onclick = () => handler.open();
+      });
+  </script>
 </div>
 {% endblock content %}
