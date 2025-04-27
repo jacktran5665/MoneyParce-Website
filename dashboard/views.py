@@ -17,6 +17,7 @@ from plaid.model.transactions_get_request_options import TransactionsGetRequestO
 from plaid.model.country_code import CountryCode
 from plaid.model.products import Products
 from django.contrib.auth import logout
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 @login_required
 def dashboard_view(request):
@@ -45,14 +46,15 @@ def dashboard_view(request):
             return redirect('dashboard')
 
         elif 'submit_budget' in request.POST:
-            name = request.POST.get('budget_name','').strip()
-            tot  = Decimal(request.POST.get('total_budget_new','0') or '0')
+            name = request.POST.get('budget_name', '').strip()
+            tot  = Decimal(request.POST.get('total_budget_new', '0') or '0')
             if name:
                 Budget.objects.create(user=request.user,
                                       name=name,
                                       total_budget=tot)
+
         elif 'update_budget' in request.POST:
-            budget_id  = request.POST.get('budget_id')
+            budget_id = request.POST.get('budget_id')
             name = request.POST.get('budget_name', '').strip()
             tot  = Decimal(request.POST.get('total_budget_new', '0') or '0')
             try:
@@ -66,6 +68,7 @@ def dashboard_view(request):
                 messages.error(request, "Budget not found.")
 
             return redirect('dashboard')
+
         elif 'delete_budget' in request.POST:
             budget_id = request.POST.get('budget_id')
             try:
@@ -82,9 +85,13 @@ def dashboard_view(request):
     expenses = Expense.objects.filter(user=request.user)
     budgets  = Budget.objects.filter(user=request.user).order_by('id')
 
-    total_income      = sum(i.amount for i in incomes)
-    total_expenses    = sum(e.amount for e in expenses)
-    remaining_balance = total_income - total_expenses
+    total_income_raw      = int(sum(i.amount for i in incomes))
+    total_expenses_raw    = int(sum(e.amount for e in expenses))
+    remaining_balance_raw = int(total_income_raw - total_expenses_raw)
+
+    total_income      = intcomma(total_income_raw)
+    total_expenses    = intcomma(total_expenses_raw)
+    remaining_balance = intcomma(remaining_balance_raw)
 
     return render(request, 'dashboard/dashboard.html', {
         'total_income':      total_income,
