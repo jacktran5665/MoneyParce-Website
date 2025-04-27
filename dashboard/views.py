@@ -80,25 +80,37 @@ def dashboard_view(request):
 
         return redirect('dashboard')
 
-    # GET
-    incomes  = Income.objects.filter(user=request.user)
+    incomes = Income.objects.filter(user=request.user)
     expenses = Expense.objects.filter(user=request.user)
-    budgets  = Budget.objects.filter(user=request.user).order_by('id')
+    budgets = Budget.objects.filter(user=request.user).order_by('id')
 
-    total_income_raw      = int(sum(i.amount for i in incomes))
-    total_expenses_raw    = int(sum(e.amount for e in expenses))
-    remaining_balance_raw = int(total_income_raw - total_expenses_raw)
+    total_income_raw = sum(i.amount for i in incomes)
+    total_expenses_raw = sum(e.amount for e in expenses)
+    remaining_balance_raw = total_income_raw - total_expenses_raw
 
-    total_income      = intcomma(total_income_raw)
-    total_expenses    = intcomma(total_expenses_raw)
-    remaining_balance = intcomma(remaining_balance_raw)
+    total_income = int(total_income_raw)
+    total_expenses = int(total_expenses_raw)
+    remaining_balance = int(remaining_balance_raw)
+
+    total_income_fmt = intcomma(total_income)
+    total_expenses_fmt = intcomma(total_expenses)
+    remaining_balance_fmt = intcomma(remaining_balance)
+
+    if total_income_raw > 0:
+        expense_over_income_raw = (total_expenses_raw / total_income_raw) * 100
+    else:
+        expense_over_income_raw = 0.00
+
+    expense_over_income = f"{expense_over_income_raw:.2f}%"
 
     return render(request, 'dashboard/dashboard.html', {
-        'total_income':      total_income,
-        'total_expenses':    total_expenses,
-        'remaining_balance': remaining_balance,
-        'budgets':           budgets,
+        'total_income': total_income_fmt,
+        'total_expenses': total_expenses_fmt,
+        'remaining_balance': remaining_balance_fmt,
+        'expense_over_income': expense_over_income,
+        'budgets': budgets,
     })
+
 
 
 @login_required

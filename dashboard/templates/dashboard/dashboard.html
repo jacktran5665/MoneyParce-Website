@@ -1,6 +1,7 @@
 {# templates/dashboard/dashboard.html #}
 {% extends 'base.html' %}
 {% load static %}
+<link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
 {% block content %}
 <div class="header">
   <div class="pageTitle">Overview</div>
@@ -32,7 +33,7 @@
     </div>
     <div class="totalBeige">
       <div class="totalTitle">Expense over Income</div>
-      <div class="totalText">0.00%</div>
+      <div class="totalText">{{ expense_over_income }}</div>
     </div>
   </div>
 
@@ -52,7 +53,7 @@
               edit
             </button>
           </div>
-          <div>{{ budget.expenses_total|floatformat:2 }} / {{ budget.total_budget }}</div>
+          <div>${{ budget.expenses_total|floatformat:0 }}</div>
         </div>
         {% empty %}<div class="totalTitle">* No budgets yet.</div>{% endfor %}
       </ul>
