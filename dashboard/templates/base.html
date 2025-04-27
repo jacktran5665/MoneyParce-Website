@@ -18,6 +18,8 @@
       <div id="LogoName">MoneyParce</div>
       <p>Welcome, {% if user.is_authenticated %}{{ user.username }}{% else %}User{% endif %}</p>
     </div>
+
+
     <div class="navigator">
       <a class="sideBarText" href="{% url 'dashboard' %}">
         <div class="navDiv">

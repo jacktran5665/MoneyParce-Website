@@ -64,10 +64,6 @@ body {
   display: block;
 }
 
-.nav-item.active {
-  background-color: #2A2A30;
-  border-left: 4px solid #92140C;
-}
 
 .header {
   background-color: white;
@@ -164,10 +160,9 @@ body {
 }
 
 .whiteBoxTitle{
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 600;
-
-  margin-top: 20px;
+  margin-top: 60px;
   margin-right: 320px;
 }
 

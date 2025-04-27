@@ -69,3 +69,11 @@ button:hover {
 label {
     display: none;
 }
+
+.error {
+    font-size: 25px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}

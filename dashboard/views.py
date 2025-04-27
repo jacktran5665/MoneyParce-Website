@@ -16,6 +16,7 @@ from plaid.model.transactions_get_request import TransactionsGetRequest
 from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
 from plaid.model.country_code import CountryCode
 from plaid.model.products import Products
+from django.contrib.auth import logout
 
 @login_required
 def dashboard_view(request):
@@ -162,6 +163,11 @@ def fetch_transactions(request):
 @login_required
 def settings_view(request):
     return render(request, 'settings/settings.html')
+
+def logout_view(request):
+    logout(request)
+    #return render(request, 'home/index.html')
+    return redirect('/')
 
 def get_plaid_client():
     configuration = plaid.Configuration(

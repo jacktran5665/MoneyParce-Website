@@ -8,4 +8,5 @@ urlpatterns = [
     path('exchange_public_token/', views.exchange_public_token, name='exchange_public_token'),
     path('fetch_transactions/', views.fetch_transactions, name='fetch_transactions'),
     path('settings/', settings_view, name='settings'),
+    path('logout/', views.logout_view, name='logout'),
 ]

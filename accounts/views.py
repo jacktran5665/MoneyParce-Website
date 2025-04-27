@@ -39,9 +39,9 @@ def forgot_password(request):
             user = User.objects.get(username=username)
             profile = Profile.objects.get(user=user)
             if str(profile.budget) != str(budget):
-                error = 'Security answer is incorrect.'
+                error = 'Security answer is incorrect'
             elif password != password2:
-                error = 'Passwords do not match.'
+                error = 'Passwords do not match'
             else:
                 user.set_password(password)
                 user.save()
@@ -50,9 +50,9 @@ def forgot_password(request):
                 from django.shortcuts import redirect
                 return redirect('dashboard')
         except User.DoesNotExist:
-            error = 'User not found.'
+            error = 'User not found'
         except Profile.DoesNotExist:
-            error = 'Profile not found.'
+            error = 'Profile not found'
     template_data['error'] = error
-    return render(request, 'home/forgot_password.html', template_data)
+    return render(request, 'accounts/forgot_password.html', template_data)
 
