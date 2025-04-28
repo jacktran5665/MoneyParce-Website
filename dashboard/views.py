@@ -50,6 +50,29 @@ def dashboard_view(request):
                 Budget.objects.create(user=request.user,
                                       name=name,
                                       total_budget=tot)
+        elif 'update_budget' in request.POST:
+            budget_id  = request.POST.get('budget_id')
+            name = request.POST.get('budget_name', '').strip()
+            tot  = Decimal(request.POST.get('total_budget_new', '0') or '0')
+            try:
+                budget_obj = Budget.objects.get(id=budget_id, user=request.user)
+                if name:
+                    budget_obj.name = name
+                budget_obj.total_budget = tot
+                budget_obj.save()
+            except Budget.DoesNotExist:
+                from django.contrib import messages
+                messages.error(request, "Budget not found.")
+
+            return redirect('dashboard')
+        elif 'delete_budget' in request.POST:
+            budget_id = request.POST.get('budget_id')
+            try:
+                Budget.objects.get(id=budget_id, user=request.user).delete()
+            except Budget.DoesNotExist:
+                from django.contrib import messages
+                messages.error(request, "Budget not found.")
+            return redirect('dashboard')
 
         return redirect('dashboard')
 
