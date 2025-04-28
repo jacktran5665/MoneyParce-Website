@@ -67,6 +67,7 @@ body {
 .header {
   background-color: white;
   height: 71px;
+  width: 1200px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -143,6 +144,7 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  width: 949px;
 }
 
 .whiteBox {
@@ -161,8 +163,8 @@ body {
 .whiteBoxTitle{
   font-size: 30px;
   font-weight: 600;
-  margin-top: 60px;
-  margin-right: 320px;
+  margin-top: 20px;
+  margin-right: 300px;
 }
 
 .budgetList {
@@ -227,6 +229,12 @@ body {
 
   cursor: pointer;
   margin-bottom: 20px;
+}
+
+.smallLink{
+  border: none;
+  background-color: white;
+  color: grey;
 }
 
 .chartWrapper{
@@ -508,4 +516,21 @@ margin-top: 30px;
   padding: 1rem;
   color: #777;
   font-style: italic;
+}
+
+.chartToolbar{
+  background-color: #721c24;
+  color: white;
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  height: 40px;
+  padding-left: 67px;
+}
+
+.chartBtn{
+  border:none;
+  background-color: #721c24;
+  color: white;
+  margin-right: 10px;
 }

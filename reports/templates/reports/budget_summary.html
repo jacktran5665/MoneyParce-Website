@@ -1,6 +1,9 @@
 {# templates/reports/budget_summary.html #}
 {% extends 'base.html' %}
 {% load static %}
+{% block page_title %}
+  Reports
+{% endblock %}
 <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
 {% block content %}
 <script src="https://www.gstatic.com/charts/loader.js"></script>
@@ -71,11 +74,9 @@
   }
 </script>
 
-<div class="header"><div class="pageTitle">Summary Report</div></div>
-
 <div class="chartToolbar">
   <button class="chartBtn activeBtn" onclick="drawChart('bar');     setActive(this);">Stacked Bar</button>
-  <button class="chartBtn"           onclick="drawChart('pie');     setActive(this);">Pie</button>
+  <button class="chartBtn"           onclick="drawChart('pie');     setActive(this);">Pie Chart</button>
   <button class="chartBtn"           onclick="drawChart('monthly'); setActive(this);">This Month</button>
 </div>
 
