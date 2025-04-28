@@ -26,11 +26,19 @@ body {
   margin-bottom: 100px;
 }
 
+
 .sideBarText {
-  font-size: 16px;
+  margin-top: 2px;
+  font-size: 14px;
   color: white;
   text-decoration: none;
   font-weight: 500;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+.sideBarText:hover{
+  color:#92140C;
 }
 
 #LogoName {
@@ -91,6 +99,9 @@ body {
 
 .innerWrapper {
   padding: 30px;
+
+  margin-top: 10px;
+  margin-left: 70px;
 }
 
 .totalContainer {
