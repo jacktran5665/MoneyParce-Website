@@ -197,10 +197,17 @@ def fetch_transactions(request):
         plaid_categories = txn.get('category', [])
 
         matched_budget = None
+        if plaid_categories and 'Transfer' in plaid_categories:
+            continue 
+
         if plaid_categories:
-            # Try matching the most specific (first) category to a Budget
-            plaid_primary_category = plaid_categories[0]
-            budget_name = PLAID_CATEGORY_TO_BUDGET.get(plaid_primary_category)
+            # Try to match ANY of the Plaid categories to your mapping
+            for category in plaid_categories:
+                budget_name = PLAID_CATEGORY_TO_BUDGET.get(category)
+                if budget_name:
+                    matched_budget = Budget.objects.filter(user=request.user, name__iexact=budget_name).first()
+                    if matched_budget:
+                        break  # Stop once we find a match
 
             if budget_name:
                 matched_budget = Budget.objects.filter(user=request.user, name__iexact=budget_name).first()
@@ -238,16 +245,60 @@ def get_plaid_client():
 
 
 PLAID_CATEGORY_TO_BUDGET = {
+    # Food related
+    'Food and Drink': 'Food & Drink',
     'Coffee Shop': 'Food & Drink',
     'Restaurants': 'Food & Drink',
     'Fast Food': 'Food & Drink',
+    'Bars': 'Food & Drink',
+
+    # Grocery stores
     'Groceries': 'Groceries',
+    'Supermarkets and Groceries': 'Groceries',
+    'Convenience Stores': 'Groceries',
+
+    # Transportation
     'Gas': 'Transportation',
     'Taxi': 'Transportation',
+    'Ride Share': 'Transportation',
+    'Parking': 'Transportation',
+    'Public Transportation': 'Transportation',
+    'Car Rental': 'Transportation',
+    'Tolls and Fees': 'Transportation',
+
+    # Entertainment
     'Movies': 'Entertainment',
+    'Music and Video': 'Entertainment',
+    'Concerts': 'Entertainment',
+    'Video Games': 'Entertainment',
+    'Amusement Parks': 'Entertainment',
+    'Arts and Crafts': 'Entertainment',
+    'Recreation': 'Entertainment',
+    'Shops': 'Transportation',
+
+    # Travel
+    'Travel': 'Travel',
     'Hotel': 'Travel',
     'Airlines and Aviation Services': 'Travel',
+    'Bus Lines': 'Travel',
+    'Cruises': 'Travel',
+
+    # Health & Fitness (optional if you want to add later)
+    'Pharmacies': 'Health',
+    'Doctor': 'Health',
+    'Dentist': 'Health',
+    'Eyecare': 'Health',
+
+    # Bank fees and payments
     'Credit Card Payment': 'Fees & Payments',
     'Bank Fees': 'Fees & Payments',
+    'Loan Payment': 'Fees & Payments',
+    'Mortgage Payment': 'Fees & Payments',
+    'Payment': 'Fees & Payments',
+
+    # Savings
+    'Investments': 'Savings',
+    'Retirement': 'Savings',
+    'Savings': 'Savings',
 }
 
