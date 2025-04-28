@@ -17,7 +17,7 @@
     <div class="sideBarHeader">
       <img src="{% static 'img/logo.png' %}" style="height: 70px" />
       <div id="LogoName">MoneyParce</div>
-      <p>Welcome, {% if user.is_authenticated %}{{ user.username }}{% else %}User{% endif %}</p>
+      <div class="welcome">Welcome, {% if user.is_authenticated %}{{ user.username }}{% else %}User{% endif %}</div>
     </div>
 
 

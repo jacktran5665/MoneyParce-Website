@@ -12,9 +12,8 @@ body {
   flex-direction: column;
   align-items: center;
   color: white;
-  width: 250px;
+  width: 400px;
   height:100vh;
-  display: flex;
 }
 
 .sideBarHeader{
@@ -37,9 +36,13 @@ body {
 #LogoName {
   margin: 0.5rem 0;
   font-weight: 550;
-  font-size: 1.5rem;
+  font-size: 25px;
 }
 
+.welcome{
+  font-size: 14px;
+
+}
 
 .navigator {
   height: 160px;
@@ -67,7 +70,7 @@ body {
 .header {
   background-color: white;
   height: 71px;
-  width: 1200px;
+  width: 1150px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -533,4 +536,38 @@ margin-top: 30px;
   background-color: #721c24;
   color: white;
   margin-right: 10px;
+}
+
+.chartWrapper{
+  margin: 30px;
+  border-radius: 30px;
+}
+
+.settingWrapper{
+  background-color: white;
+  color: #1E1E24;
+  border-radius: 30px;
+
+  width: 949px;
+  height: 426px;
+
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logoutBtn {
+  width: 173px;
+  height: 36px;
+
+  font-size:14px;
+  font-weight:600;
+
+  background-color: rgb(73, 73, 73);
+  color: white;
+  border-radius: 30px;
+  border: none;
+
+  cursor: pointer;
+  margin-bottom: 20px;
 }
