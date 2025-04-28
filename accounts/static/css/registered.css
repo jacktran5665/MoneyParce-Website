@@ -14,17 +14,20 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 446px;
-    height: 400px;
-    margin-top: 30px;
+    width: 500px;
+    height: 600px;
+
+    background-color: white;
+
+    border-radius: 30px;
 }
 
 h2 {
     font-size: 30px;
     font-weight: 600;
-    color: white;
+    color: #92140C;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     border-bottom: none;
 }
 
@@ -36,10 +39,9 @@ form {
 
 input {
     width: 420px;
-    height: 50px;
+    height: 45px;
     font-size: 16px;
     border-radius: 30px;
-    margin-bottom: 5px;
     padding-left: 20px;
     border: none;
     background-color: #e5e5e5;
@@ -59,11 +61,12 @@ button {
     color: white;
     border: none;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 20px;
+    transition: 0.4s;
 }
 
 button:hover {
-    background-color: #7D110A;
+    background-color: #b72c22;
 }
 
 label {
@@ -76,4 +79,33 @@ label {
     font-weight: bold;
     text-align: center;
     margin-top: 20px;
+}
+
+.descWrapper {
+    margin-left: 240px;
+    margin-top: 10px;
+
+    width: 450px;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+
+}
+
+.desc {
+    font-size: 14px;
+    color: grey; 
+    margin-right: 10px;
+}
+
+.loginBtn{
+    font-size: 14px;
+    color: grey;
+    font-style: none;
+    transition: 0.4s;
+    cursor: pointer;
+}
+
+.loginBtn:hover{
+    color: rgb(180, 180, 180);
 }

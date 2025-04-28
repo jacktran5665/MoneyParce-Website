@@ -9,4 +9,5 @@ urlpatterns = [
     path('fetch_transactions/', views.fetch_transactions, name='fetch_transactions'),
     path('settings/', settings_view, name='settings'),
     path('logout/', views.logout_view, name='logout'),
+    path('/', views.logout_view, name='login'),
 ]
