@@ -1,5 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
+from django.contrib import messages
+
 from .forms import CustomUserCreationForm
 
 def signup(request):
@@ -56,3 +60,29 @@ def forgot_password(request):
     template_data['error'] = error
     return render(request, 'accounts/forgot_password.html', template_data)
 
+
+@login_required
+def delete_account(request):
+    if request.method == 'GET':
+        return render(request, 'accounts/delete_account.html')
+
+    elif request.method == 'POST':
+        password = request.POST.get('password', '')
+        confirmation = request.POST.get('confirmation', '')
+
+        # Check if the password is correct and the confirmation text is "DELETE"
+        if not check_password(password, request.user.password):
+            messages.error(request, "Incorrect password. Please try again.")
+            return render(request, 'accounts/delete_account.html')
+
+        if confirmation != 'DELETE':
+            messages.error(request, "Please type DELETE in all caps to confirm.")
+            return render(request, 'accounts/delete_account.html')
+
+        user = request.user
+
+        logout(request)
+
+        user.delete()
+
+        return redirect('/')

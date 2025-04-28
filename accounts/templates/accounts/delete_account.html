@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="header">
+  <div class="pageTitle">Delete Account</div>
+</div>
+
+<div class="innerWrapper">
+  <div class="whiteBox" style="width: 600px; margin: 0 auto; height: 500px;">
+    <div class="whiteBoxTitle" style="margin-right: auto; margin-left: 40px; margin-top: 40px; color: #92140C;">Warning</div>
+    
+    <p style="color: #d9534f; font-weight: 600; margin: 20px 40px; font-size: 16px; text-align: center;">
+      This action is permanent and cannot be undone.<br>All your data will be permanently deleted.
+    </p>
+    
+    {% if messages %}
+    <div class="messages" style="width: 80%; margin: 10px auto;">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px 15px; border-radius: 4px; margin-bottom: 15px;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <form method="POST" style="width: 80%; margin: 0 auto;">
+      {% csrf_token %}
+      
+      <div style="margin-bottom: 20px;">
+        <label for="password" style="display: block; margin-bottom: 8px; font-weight: 500;">Enter your password to confirm:</label>
+        <input type="password" name="password" id="password" class="inputBox" style="width: 100%;" required>
+      </div>
+      
+      <div style="margin-bottom: 30px;">
+        <label for="confirmation" style="display: block; margin-bottom: 8px; font-weight: 500;">Type DELETE in all caps to confirm:</label>
+        <input type="text" name="confirmation" id="confirmation" class="inputBox" style="width: 100%;" required>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+        <a href="{% url 'settings' %}" class="addBtn" style="background-color: #e0e0e0; color: #333; text-decoration: none; text-align: center; line-height: 36px;">Cancel</a>
+        <button type="submit" class="addBtn" style="background-color: #92140C;">Permanently Delete Account</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

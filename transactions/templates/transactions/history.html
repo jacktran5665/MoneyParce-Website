@@ -1,61 +1,16 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base.html' %}
 {% load static %}
 <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
-<head>
-  <title>MoneyParce</title>
-  <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet" />
-  <link rel="stylesheet"
-        type="text/css"
-        href="{% static 'css/transactions.css' %}" />
-</head>
-
-<body>
-  <div class="page-container">
-    <div class="sidebar">
-      <div class="brand">
-        <img src="{% static 'img/logo.png' %}" alt="MoneyParce" height="70" />
-        <h1>MoneyParce</h1>
-        <p>Welcome, {% if user.is_authenticated %}{{ user.username }}{% else %}User{% endif %}</p>
-      </div>
-
-      <div class="nav-menu">
-        <a href="{% url 'dashboard' %}" class="nav-item">
-          <img src="{% static 'img/overview.png' %}" style="height: 20px; margin-right: 20px;" />
-          <div class="sideBarText">Overview</div>
-        </a>
-
-        <a href="{% url 'transactions_history' %}" class="nav-item">
-          <img src="{% static 'img/tran.png' %}" style="height: 20px; margin-right: 20px;" />
-          <div class="sideBarText">Transactions</div>
-        </a>
-
-        <a href="{% url 'budget_summary' %}" class="nav-item">
-          <img src="{% static 'img/report.png' %}" style="height: 20px; margin-right: 20px;" />
-          <div class="sideBarText">Reports</div>
-        </a>
-
-        <a href="{% url 'settings' %}" class="nav-item">
-            <img src="{% static 'img/settings.png' %}" style="height: 20px; margin-right: 20px;" />
-            <div class="sideBarText">Settings</div>
-        </a>
-
-      </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-      <div class="header">
-        <h1>Transactions</h1>
-      </div>
-
-      <div class="content">
-        <!-- Transaction History Card -->
+{% block content %}
+<div class="header">
+  <div class="pageTitle">Transactions</div>
+</div>
+<!-- Main Content -->
+<div class="main-content">
+   <div class="content">
+     <!-- Transaction History Card -->
         <div class="card">
           <h2>Transaction History</h2>
-
           <!-- Filter Controls -->
           <form method="GET" action="{% url 'transactions_history' %}" class="filter-form">
             <div class="filter-group">
@@ -167,5 +122,4 @@
       </div>
     </div>
   </div>
-</body>
-</html>
+{% endblock content %}

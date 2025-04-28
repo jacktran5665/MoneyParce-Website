@@ -43,7 +43,7 @@ def transaction_history(request):
 
     # Paginate
     page      = request.GET.get('page', 1)
-    paginator = Paginator(transactions, 10)
+    paginator = Paginator(transactions, 7)
     try:
         page_obj = paginator.page(page)
     except (PageNotAnInteger, EmptyPage):
