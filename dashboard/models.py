@@ -29,16 +29,11 @@ class Income(models.Model):
         return f"Income: ${self.amount}"
 
 class Expense(models.Model):
-    user       = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                   on_delete=models.CASCADE,
-                                   null = True,
-                                   related_name='expenses')
-    amount     = models.DecimalField(max_digits=10, decimal_places=2)
-    category   = models.ForeignKey(Budget,
-                                   on_delete=models.CASCADE,
-                                   null = True,
-                                   related_name='expenses')
-    created_at = models.DateTimeField(default=timezone.now)      # ← new!
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, related_name='expenses')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.ForeignKey(Budget, on_delete=models.CASCADE, null=True, related_name='expenses')
+    merchant_name = models.CharField(max_length=255, blank=True, null=True)  # ← add this
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Expense: ${self.amount} — {self.category.name}"
@@ -51,3 +46,4 @@ class PlaidItem(models.Model):
 
     def __str__(self):
         return f"{self.user.username} — {self.institution_name or 'Plaid Item'}"
+        

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    budget = models.IntegerField(help_text="Security question: What's your budget?")
-
+    budget = models.IntegerField(default=1000, null=True, blank=True)
+    
     def __str__(self):
         return self.user.username

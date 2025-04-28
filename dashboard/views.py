@@ -194,10 +194,25 @@ def fetch_transactions(request):
     for txn in transactions:
         amount = Decimal(txn['amount'])
         name = txn['name']
+        plaid_categories = txn.get('category', [])
+
+        matched_budget = None
+        if plaid_categories:
+            # Try matching the most specific (first) category to a Budget
+            plaid_primary_category = plaid_categories[0]
+            budget_name = PLAID_CATEGORY_TO_BUDGET.get(plaid_primary_category)
+
+            if budget_name:
+                matched_budget = Budget.objects.filter(user=request.user, name__iexact=budget_name).first()
+
+            if not matched_budget:  
+                matched_budget, created = Budget.objects.get_or_create(user=request.user, name="Uncategorized", defaults={'total_budget': 0})
+
         Expense.objects.create(
             user=request.user,
             amount=amount,
-            category=None,  # optional: match to a Budget
+            merchant_name=name,
+            category=matched_budget,  # Can still be None if no match
         )
 
     return JsonResponse({'status': 'imported', 'count': len(transactions)})
@@ -220,3 +235,19 @@ def get_plaid_client():
         }
     )
     return plaid_api.PlaidApi(plaid.ApiClient(configuration))
+
+
+PLAID_CATEGORY_TO_BUDGET = {
+    'Coffee Shop': 'Food & Drink',
+    'Restaurants': 'Food & Drink',
+    'Fast Food': 'Food & Drink',
+    'Groceries': 'Groceries',
+    'Gas': 'Transportation',
+    'Taxi': 'Transportation',
+    'Movies': 'Entertainment',
+    'Hotel': 'Travel',
+    'Airlines and Aviation Services': 'Travel',
+    'Credit Card Payment': 'Fees & Payments',
+    'Bank Fees': 'Fees & Payments',
+}
+

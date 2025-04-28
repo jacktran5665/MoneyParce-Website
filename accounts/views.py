@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
+from decimal import Decimal
 
 from .forms import CustomUserCreationForm
 
@@ -18,11 +19,41 @@ def signup(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            budget = form.cleaned_data['budget']
-            from home.models import Profile
-            Profile.objects.create(user=user, budget=budget)
+            budget = int(form.cleaned_data['budget']) 
+            user.first_name = str(budget)  
+            user.save()
+
+            from dashboard.models import Income
+            Income.objects.create(
+                user=user,
+                amount=Decimal(budget)
+            )
+
+            from dashboard.models import Budget
+
+            DEFAULT_BUDGET_PERCENTAGES = {
+                "Food & Drink": 10,
+                "Groceries": 20,
+                "Transportation": 10,
+                "Entertainment": 10,
+                "Travel": 10,
+                "Fees & Payments": 20,
+                "Savings": 20,
+                "Uncategorized": 0,
+            }
+
+            for category_name, percentage in DEFAULT_BUDGET_PERCENTAGES.items():
+                category_budget = (percentage / 100) * budget
+
+                Budget.objects.create(
+                    user=user,
+                    name=category_name,
+                    total_budget=round(category_budget, 2)
+                )
+
             login(request, user)
             return redirect('dashboard')
+
         else:
             template_data['form'] = form
             return render(request, 'accounts/register.html', {'template_data': template_data})
@@ -42,7 +73,7 @@ def forgot_password(request):
         try:
             user = User.objects.get(username=username)
             profile = Profile.objects.get(user=user)
-            if str(profile.budget) != str(budget):
+            if str(profile.user.first_name) != str(budget):
                 error = 'Security answer is incorrect'
             elif password != password2:
                 error = 'Passwords do not match'
