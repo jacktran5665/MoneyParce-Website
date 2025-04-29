@@ -44,20 +44,23 @@ def dashboard_view(request):
                 return redirect('dashboard')
 
             spent = (Expense.objects
-                             .filter(category=budget_obj, user=request.user)
-                             .aggregate(t=Sum('amount'))['t'] or Decimal('0'))
+                     .filter(category=budget_obj, user=request.user)
+                     .aggregate(total=Sum('amount'))['total'] or Decimal('0'))
 
-            if spent > budget_obj.total_budget:
-                messages.warning(
+            over_budget = spent - budget_obj.total_budget
+            future_spent = spent + amt - budget_obj.total_budget
+
+            if over_budget > 0:
+                messages.error(
                     request,
-                    f'The {budget_obj.name} budget is already over by '
-                    f'${(spent - budget_obj.total_budget):.2f}. Try to pull back on purcases! '
+                    f'The {budget_obj.name} budget is already over by ${future_spent:.2f} '
+                    'Try to pull back on purchases!'
                 )
-            elif spent + amt > budget_obj.total_budget:
-                messages.warning(
+            elif future_spent > 0:
+                messages.error(
                     request,
-                    f'Adding ${amt:.2f} exceeds the {budget_obj.name} '
-                    f'budget by ${((spent + amt) - budget_obj.total_budget):.2f}. Try to limit spending for {budget_obj.name}!'
+                    f'Adding ${amt:.2f} exceeds the {budget_obj.name} budget by ${future_spent:.2f} '
+                    f'Try to limit spending for {budget_obj.name}!'
                 )
 
             Expense.objects.create(

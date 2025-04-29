@@ -116,7 +116,7 @@ body {
 }
 
 .totalRed {
-  width: 220px;
+  width: 230px;
   height: 115px;
   border-radius: 30px;
 
@@ -129,7 +129,7 @@ body {
 }
 
 .totalBeige {
-  width: 220px;
+  width: 230px;
   height: 115px;
   border-radius: 30px;
 
@@ -150,7 +150,7 @@ body {
 
 .totalText {
   padding-left: 20px;
-  font-size: 40px;
+  font-size: 20px;
 }
 
 .whiteBoxWrapper{
@@ -330,14 +330,18 @@ margin-top: 30px;
 
 /* Warning message */
 .messages {
-  margin: 10px auto;
-  width: 80%;
+  margin: 1rem auto;
+  width: min(90%, 600px);
 }
+
 .alert {
-  padding: 10px 15px;
-  margin-bottom: 15px;
-  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.5;
 }
+
 .alert-error {
   background-color: #f8d7da;
   color: #721c24;
