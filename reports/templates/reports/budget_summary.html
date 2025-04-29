@@ -31,40 +31,38 @@
   function drawChart(type){
     let dataArr = (type === 'monthly') ? monthlyData : categoryData;
     if (dataArr.length <= 1) {
-    document.getElementById('chart_div').innerHTML = 
-      "<p>No transactions found. Start by adding income or expenses.</p>";
-    return;
-  }
+      document.getElementById('chart_div').innerHTML =
+        "<p>No transactions found. Start by adding income or expenses.</p>";
+      return;
+    }
 
-    let chart, options = {title:'Budget Report', theme:'material'};
+    let chart, data, options = {title:'Budget Report', theme:'material'};
 
     switch(type){
       case 'monthly':
-        data   = google.visualization.arrayToDataTable(monthlyData);
-        options = {
-          colors: LINE_COLOR,
-          title:'Spending This Month',
-          hAxis:{title:'Date'},
-          vAxis:{title:'Amount'},
-          legend:'none'
-        };
-        chart  = new google.visualization.LineChart(document.getElementById('chart_div'));
+        options.colors = LINE_COLOR;
+        options.hAxis = {title: 'Date'};
+        options.vAxis = {title: 'Amount', minValue: 0};
+        options.legend = 'none';
+        data = google.visualization.arrayToDataTable(monthlyData);
+        chart = new google.visualization.LineChart(document.getElementById('chart_div'));
         break;
 
       case 'pie':
         options.colors = PIE_COLORS;
-        data   = google.visualization.arrayToDataTable(categoryData);
-        chart  = new google.visualization.PieChart(document.getElementById('chart_div'));
+        data = google.visualization.arrayToDataTable(categoryData);
+        chart = new google.visualization.PieChart(document.getElementById('chart_div'));
         break;
 
       default:
-        data   = google.visualization.arrayToDataTable(categoryData);
+        data = google.visualization.arrayToDataTable(categoryData);
         options.isStacked = true;
         options.colors = BAR_COLORS;
-        options.hAxis={title:'Amount',minValue:0};
-        options.vAxis={title:'Category'};
-        chart  = new google.visualization.BarChart(document.getElementById('chart_div'));
+        options.hAxis = {title: 'Amount', minValue: 0};
+        options.vAxis = {title: 'Category'};
+        chart = new google.visualization.BarChart(document.getElementById('chart_div'));
     }
+
     chart.draw(data, options);
   }
 

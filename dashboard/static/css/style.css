@@ -253,11 +253,14 @@ body {
 
 .chartWrapper{
 margin-top: 30px;
+border-radius: 16px;
+  overflow: hidden;
 }
 
 #chart_div {
   width: 1000px;
-  height: 600px;
+  height: 520px;
+  border-radius: 16px;
 }
 
   /* Right Panel: Totals & Forms */
@@ -329,9 +332,26 @@ margin-top: 30px;
 }
 
 /* Warning message */
+@keyframes fadeInSlideDown {
+  0% {
+    opacity: 0;
+    top: 40px;
+    left: 38%;
+  }
+  100% {
+    opacity: 1;
+    top: 60px;
+    left: 38%;
+  }
+}
+
 .messages {
+  position: fixed;
+  top: 60px;
+  left: 38%;
   margin: 1rem auto;
-  width: min(90%, 600px);
+  width: min(60%, 600px);
+  animation: fadeInSlideDown 0.5s ease-out;
 }
 
 .alert {
@@ -340,12 +360,13 @@ margin-top: 30px;
   border-radius: 0.5rem;
   font-size: 1rem;
   line-height: 1.5;
+  text-align: center;
 }
 
 .alert-error {
   background-color: #f8d7da;
   color: #721c24;
-  border: 1px solid #f5c6cb;
+  border: 0.5px solid #f5c6cb;
 }
 
 /* Transactions Content */

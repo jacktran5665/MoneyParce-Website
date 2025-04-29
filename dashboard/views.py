@@ -53,14 +53,12 @@ def dashboard_view(request):
             if over_budget > 0:
                 messages.error(
                     request,
-                    f'The {budget_obj.name} budget is already over by ${future_spent:.2f} '
-                    'Try to pull back on purchases!'
+                    f'{budget_obj.name} is over budget by ${future_spent:.2f} Ease up on spending!'
                 )
             elif future_spent > 0:
                 messages.error(
                     request,
-                    f'Adding ${amt:.2f} exceeds the {budget_obj.name} budget by ${future_spent:.2f} '
-                    f'Try to limit spending for {budget_obj.name}!'
+                    f'Adding ${amt:.2f} exceeds {budget_obj.name} by ${future_spent:.2f} Watch your spending!'
                 )
 
             Expense.objects.create(
