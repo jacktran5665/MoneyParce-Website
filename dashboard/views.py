@@ -1,23 +1,27 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts              import render, redirect
-from decimal                       import Decimal
-from .models                       import Income, Expense, Budget
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from plaid.api import plaid_api
-from django.conf import settings
-from .models import PlaidItem
+from django.shortcuts               import render, redirect
+from decimal                        import Decimal
+from django.http                    import JsonResponse
+from django.views.decorators.csrf   import csrf_exempt
+from django.contrib import messages               
+from django.db.models import Sum
+from django.contrib.auth            import logout
+from django.contrib.humanize.templatetags.humanize import intcomma
+
+from plaid.api                      import plaid_api
+from plaid.model.link_token_create_request          import LinkTokenCreateRequest
+from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
+from plaid.model.transactions_get_request           import TransactionsGetRequest
+from plaid.model.transactions_get_request_options   import TransactionsGetRequestOptions
+from plaid.model.country_code                       import CountryCode
+from plaid.model.products                           import Products
+import plaid
 import datetime
 import json
-import plaid
-from plaid.model.link_token_create_request import LinkTokenCreateRequest
-from plaid.model.item_public_token_exchange_request import ItemPublicTokenExchangeRequest
-from plaid.model.transactions_get_request import TransactionsGetRequest
-from plaid.model.transactions_get_request_options import TransactionsGetRequestOptions
-from plaid.model.country_code import CountryCode
-from plaid.model.products import Products
-from django.contrib.auth import logout
-from django.contrib.humanize.templatetags.humanize import intcomma
+
+from django.conf   import settings
+from .models       import Income, Expense, Budget, PlaidItem
+
 
 @login_required
 def dashboard_view(request):
@@ -25,142 +29,128 @@ def dashboard_view(request):
         if 'submit_income' in request.POST:
             amt = Decimal(request.POST.get('income_amount', '0') or '0')
             Income.objects.create(user=request.user, amount=amt)
-
         elif 'submit_expense' in request.POST:
             amt = Decimal(request.POST.get('expense_amount', '0') or '0')
             bid = request.POST.get('expense_budget')
 
             if not bid:
-                from django.contrib import messages
                 messages.error(request, "Please select a budget category before adding an expense.")
-            else:
-                try:
-                    budget_obj = Budget.objects.get(id=bid, user=request.user)
-                    Expense.objects.create(user=request.user,
-                                           amount=amt,
-                                           category=budget_obj)
-                except Budget.DoesNotExist:
-                    from django.contrib import messages
-                    messages.error(request, "Selected budget category does not exist.")
+                return redirect('dashboard')
 
+            try:
+                budget_obj = Budget.objects.get(id=bid, user=request.user)
+            except Budget.DoesNotExist:
+                messages.error(request, "Selected budget category does not exist.")
+                return redirect('dashboard')
+
+            spent = (Expense.objects
+                             .filter(category=budget_obj, user=request.user)
+                             .aggregate(t=Sum('amount'))['t'] or Decimal('0'))
+
+            if spent > budget_obj.total_budget:
+                messages.warning(
+                    request,
+                    f'The {budget_obj.name} budget is already over by '
+                    f'${(spent - budget_obj.total_budget):.2f}. Try to pull back on purcases! '
+                )
+            elif spent + amt > budget_obj.total_budget:
+                messages.warning(
+                    request,
+                    f'Adding ${amt:.2f} exceeds the {budget_obj.name} '
+                    f'budget by ${((spent + amt) - budget_obj.total_budget):.2f}. Try to limit spending for {budget_obj.name}!'
+                )
+
+            Expense.objects.create(
+                user     = request.user,
+                amount   = amt,
+                category = budget_obj
+            )
             return redirect('dashboard')
 
         elif 'submit_budget' in request.POST:
             name = request.POST.get('budget_name', '').strip()
             tot  = Decimal(request.POST.get('total_budget_new', '0') or '0')
             if name:
-                Budget.objects.create(user=request.user,
-                                      name=name,
-                                      total_budget=tot)
+                Budget.objects.create(user=request.user, name=name, total_budget=tot)
 
         elif 'update_budget' in request.POST:
-            budget_id = request.POST.get('budget_id')
+            bid  = request.POST.get('budget_id')
             name = request.POST.get('budget_name', '').strip()
             tot  = Decimal(request.POST.get('total_budget_new', '0') or '0')
             try:
-                budget_obj = Budget.objects.get(id=budget_id, user=request.user)
+                budget_obj = Budget.objects.get(id=bid, user=request.user)
                 if name:
                     budget_obj.name = name
                 budget_obj.total_budget = tot
                 budget_obj.save()
             except Budget.DoesNotExist:
-                from django.contrib import messages
                 messages.error(request, "Budget not found.")
-
             return redirect('dashboard')
-
+        
         elif 'delete_budget' in request.POST:
-            budget_id = request.POST.get('budget_id')
+            bid = request.POST.get('budget_id')
             try:
-                Budget.objects.get(id=budget_id, user=request.user).delete()
+                Budget.objects.get(id=bid, user=request.user).delete()
             except Budget.DoesNotExist:
-                from django.contrib import messages
                 messages.error(request, "Budget not found.")
             return redirect('dashboard')
 
         return redirect('dashboard')
 
-    incomes = Income.objects.filter(user=request.user)
-    expenses = Expense.objects.filter(user=request.user)
-    budgets = Budget.objects.filter(user=request.user).order_by('id')
+    incomes   = Income.objects.filter(user=request.user)
+    expenses  = Expense.objects.filter(user=request.user)
+    budgets   = Budget.objects.filter(user=request.user).order_by('id')
 
-    total_income_raw = sum(i.amount for i in incomes)
-    total_expenses_raw = sum(e.amount for e in expenses)
+    total_income_raw      = sum(i.amount for i in incomes)
+    total_expenses_raw    = sum(e.amount for e in expenses)
     remaining_balance_raw = total_income_raw - total_expenses_raw
 
-    total_income = int(total_income_raw)
-    total_expenses = int(total_expenses_raw)
-    remaining_balance = int(remaining_balance_raw)
+    total_income      = total_income_raw
+    total_expenses    = total_expenses_raw
+    remaining_balance = remaining_balance_raw
 
-    total_income_fmt = intcomma(total_income)
-    total_expenses_fmt = intcomma(total_expenses)
-    remaining_balance_fmt = intcomma(remaining_balance)
-
-    if total_income_raw > 0:
-        expense_over_income_raw = (total_expenses_raw / total_income_raw) * 100
-    else:
-        expense_over_income_raw = 0.00
-
-    expense_over_income = f"{expense_over_income_raw:.2f}%"
-
-    return render(request, 'dashboard/dashboard.html', {
-        'total_income': total_income_fmt,
-        'total_expenses': total_expenses_fmt,
-        'remaining_balance': remaining_balance_fmt,
-        'expense_over_income': expense_over_income,
-        'budgets': budgets,
-    })
-
-
+    ctx = {
+        'total_income'       : intcomma(total_income),
+        'total_expenses'     : intcomma(total_expenses),
+        'remaining_balance'  : intcomma(remaining_balance),
+        'expense_over_income': f"{(total_expenses_raw / total_income_raw * 100):.2f}%"
+                               if total_income_raw else "0.00%",
+        'budgets'            : budgets,
+    }
+    return render(request, 'dashboard/dashboard.html', ctx)
 
 @login_required
 def create_link_token(request):
     configuration = plaid.Configuration(
         host=plaid.Environment.Sandbox,
-        api_key={
-            'clientId': settings.PLAID_CLIENT_ID,
-            'secret': settings.PLAID_SECRET
-        }
+        api_key={'clientId': settings.PLAID_CLIENT_ID, 'secret': settings.PLAID_SECRET}
     )
     client = get_plaid_client()
 
-    request_data = LinkTokenCreateRequest(
+    req = LinkTokenCreateRequest(
         user={"client_user_id": str(request.user.id)},
         client_name="MoneyParce",
         products=[Products("transactions")],
         country_codes=[CountryCode("US")],
         language="en"
     )
+    return JsonResponse(client.link_token_create(req).to_dict())
 
-    response = client.link_token_create(request_data)
-    return JsonResponse(response.to_dict())
 
 @csrf_exempt
 @login_required
 def exchange_public_token(request):
-    body = json.loads(request.body)
-    public_token = body.get('public_token')
-
-    configuration = plaid.Configuration(
-        host=plaid.Environment.Sandbox,
-        api_key={
-            'clientId': settings.PLAID_CLIENT_ID,
-            'secret': settings.PLAID_SECRET
-        }
-    )
-    client = get_plaid_client()
-
-    exchange_request = ItemPublicTokenExchangeRequest(public_token=public_token)
-    exchange_response = client.item_public_token_exchange(exchange_request)
+    public_token = json.loads(request.body).get('public_token')
+    client       = get_plaid_client()
+    exchange     = client.item_public_token_exchange(
+                      ItemPublicTokenExchangeRequest(public_token=public_token))
 
     PlaidItem.objects.update_or_create(
         user=request.user,
-        defaults={
-            'access_token': exchange_response.access_token,
-            'item_id': exchange_response.item_id
-        }
+        defaults={'access_token': exchange.access_token, 'item_id': exchange.item_id}
     )
     return JsonResponse({'status': 'access token saved'})
+
 
 @login_required
 def fetch_transactions(request):
@@ -169,77 +159,67 @@ def fetch_transactions(request):
     except PlaidItem.DoesNotExist:
         return JsonResponse({'error': 'No linked Plaid account'}, status=400)
 
-    configuration = plaid.Configuration(
-        host=plaid.Environment.Sandbox,
-        api_key={
-            'clientId': settings.PLAID_CLIENT_ID,
-            'secret': settings.PLAID_SECRET
-        }
-    )
-    client = get_plaid_client()
-
-    end_date = datetime.datetime.today()
+    client     = get_plaid_client()
+    end_date   = datetime.date.today()
     start_date = end_date - datetime.timedelta(days=30)
 
-    request_data = TransactionsGetRequest(
+    req = TransactionsGetRequest(
         access_token=plaid_item.access_token,
-        start_date=start_date.date(),
-        end_date=end_date.date(),
+        start_date=start_date,
+        end_date=end_date,
         options=TransactionsGetRequestOptions(count=20)
     )
+    txns = client.transactions_get(req)['transactions']
 
-    response = client.transactions_get(request_data)
-    transactions = response['transactions']
+    for t in txns:
+        amount   = Decimal(t['amount'])
+        name     = t['name']
+        categories = t.get('category', [])
 
-    for txn in transactions:
-        amount = Decimal(txn['amount'])
-        name = txn['name']
-        plaid_categories = txn.get('category', [])
+        # skip transfers
+        if categories and 'Transfer' in categories:
+            continue
 
+        # map Plaid category → Budget
         matched_budget = None
-        if plaid_categories and 'Transfer' in plaid_categories:
-            continue 
-
-        if plaid_categories:
-            # Try to match ANY of the Plaid categories to your mapping
-            for category in plaid_categories:
-                budget_name = PLAID_CATEGORY_TO_BUDGET.get(category)
-                if budget_name:
-                    matched_budget = Budget.objects.filter(user=request.user, name__iexact=budget_name).first()
-                    if matched_budget:
-                        break  # Stop once we find a match
-
+        for cat in categories:
+            budget_name = PLAID_CATEGORY_TO_BUDGET.get(cat)
             if budget_name:
-                matched_budget = Budget.objects.filter(user=request.user, name__iexact=budget_name).first()
-
-            if not matched_budget:  
-                matched_budget, created = Budget.objects.get_or_create(user=request.user, name="Uncategorized", defaults={'total_budget': 0})
+                matched_budget = Budget.objects.filter(
+                                    user=request.user, name__iexact=budget_name
+                                 ).first()
+                if matched_budget:
+                    break
+        if not matched_budget:
+            matched_budget, _ = Budget.objects.get_or_create(
+                                    user=request.user,
+                                    name="Uncategorized",
+                                    defaults={'total_budget': 0})
 
         Expense.objects.create(
             user=request.user,
             amount=amount,
             merchant_name=name,
-            category=matched_budget,  # Can still be None if no match
+            category=matched_budget
         )
 
-    return JsonResponse({'status': 'imported', 'count': len(transactions)})
+    return JsonResponse({'status': 'imported', 'count': len(txns)})
+
 
 @login_required
 def settings_view(request):
     return render(request, 'settings/settings.html')
 
+
 def logout_view(request):
     logout(request)
-    #return render(request, 'home/index.html')
     return redirect('/')
+
 
 def get_plaid_client():
     configuration = plaid.Configuration(
         host=plaid.Environment.Sandbox,
-        api_key={
-            'clientId': settings.PLAID_CLIENT_ID,
-            'secret': settings.PLAID_SECRET
-        }
+        api_key={'clientId': settings.PLAID_CLIENT_ID, 'secret': settings.PLAID_SECRET}
     )
     return plaid_api.PlaidApi(plaid.ApiClient(configuration))
 
@@ -251,12 +231,10 @@ PLAID_CATEGORY_TO_BUDGET = {
     'Restaurants': 'Food & Drink',
     'Fast Food': 'Food & Drink',
     'Bars': 'Food & Drink',
-
-    # Grocery stores
+    # Groceries
     'Groceries': 'Groceries',
     'Supermarkets and Groceries': 'Groceries',
     'Convenience Stores': 'Groceries',
-
     # Transportation
     'Gas': 'Transportation',
     'Taxi': 'Transportation',
@@ -265,7 +243,6 @@ PLAID_CATEGORY_TO_BUDGET = {
     'Public Transportation': 'Transportation',
     'Car Rental': 'Transportation',
     'Tolls and Fees': 'Transportation',
-
     # Entertainment
     'Movies': 'Entertainment',
     'Music and Video': 'Entertainment',
@@ -275,30 +252,25 @@ PLAID_CATEGORY_TO_BUDGET = {
     'Arts and Crafts': 'Entertainment',
     'Recreation': 'Entertainment',
     'Shops': 'Transportation',
-
     # Travel
     'Travel': 'Travel',
     'Hotel': 'Travel',
     'Airlines and Aviation Services': 'Travel',
     'Bus Lines': 'Travel',
     'Cruises': 'Travel',
-
-    # Health & Fitness (optional if you want to add later)
+    # Health & Fitness
     'Pharmacies': 'Health',
     'Doctor': 'Health',
     'Dentist': 'Health',
     'Eyecare': 'Health',
-
     # Bank fees and payments
     'Credit Card Payment': 'Fees & Payments',
     'Bank Fees': 'Fees & Payments',
     'Loan Payment': 'Fees & Payments',
     'Mortgage Payment': 'Fees & Payments',
     'Payment': 'Fees & Payments',
-
     # Savings
     'Investments': 'Savings',
     'Retirement': 'Savings',
     'Savings': 'Savings',
 }
-

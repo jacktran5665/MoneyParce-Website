@@ -9,13 +9,17 @@
 
 
 {% if messages %}
-<div class="messages">
-  {% for message in messages %}
-    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-      {{ message }}
-    </div>
-  {% endfor %}
-</div>
+  <div class="messages">
+    {% for message in messages %}
+      <div
+        class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}"
+        role="alert"
+      >
+        {{ message }}
+        <button type="button" class="alert-close" aria-label="Close">×</button>
+      </div>
+    {% endfor %}
+  </div>
 {% endif %}
 
 <div class="innerWrapper">
@@ -101,6 +105,14 @@
       </div>
     </form>
   </div>
+
+  <script>
+    document.addEventListener("click", e => {
+      if (e.target.matches(".alert-close")) {
+        e.target.parentElement.remove();
+      }
+    });
+  </script>
 
   <script>
     function toggleBudgetForm() {
