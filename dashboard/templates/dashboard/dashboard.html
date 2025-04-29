@@ -53,7 +53,7 @@
               edit
             </button>
           </div>
-          <div>${{ budget.expenses_total|floatformat:0 }}</div>
+          <div>${{ budget.expenses_total|floatformat:2 }} / {{ budget.total_budget }}</div>
         </div>
         {% empty %}<div class="totalTitle">* No budgets yet.</div>{% endfor %}
       </ul>
