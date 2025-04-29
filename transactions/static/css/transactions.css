@@ -121,6 +121,7 @@ body {
 
 .desc-column {
   width: 60%;
+  margin-left: 200px;
 }
 
 .transaction-amount {
