@@ -83,8 +83,6 @@ body {
   background-color: white;
   border-radius: 1rem;
   padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .card h2 {
